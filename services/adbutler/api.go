@@ -3,7 +3,8 @@ package adbutler
 import (
     "encoding/json"
     "net/http"
-    "io/ioutil"
+
+    "goserver/libs/utils"
 )
 
 const (
@@ -36,7 +37,7 @@ func (api Api) GetZones() (zonesResponse ZonesResponse) {
     if err != nil {
         return
     }
-    body := GetResponseBody(resp)
+    body := utils.GetResponseBody(resp)
     if len(body) > 0 {
         json.Unmarshal(body, &zonesResponse)
     }
@@ -48,7 +49,7 @@ func (api Api) GetPublishers() (publishersResponse PublishersResponse) {
     if err != nil {
         return
     }
-    body := GetResponseBody(resp)
+    body := utils.GetResponseBody(resp)
     if len(body) > 0 {
         json.Unmarshal(body, &publishersResponse)
     }
@@ -60,7 +61,7 @@ func (api Api) GetZoneDailyReport() (zoneDailyResponse ZoneDailyReportResponse) 
     if err != nil {
         return
     }
-    body := GetResponseBody(resp)
+    body := utils.GetResponseBody(resp)
     if len(body) > 0 {
         json.Unmarshal(body, &zoneDailyResponse)
     }
@@ -73,15 +74,9 @@ func (api Api) GetZoneBlankLogs() (blankLogsResponse ZoneBlankLogsResponse) {
     if err != nil {
         return
     }
-    body := GetResponseBody(resp)
+    body := utils.GetResponseBody(resp)
     if len(body) > 0 {
         json.Unmarshal(body, &blankLogsResponse)
     }
     return
-}
-
-func GetResponseBody(resp *http.Response) []byte {
-    defer resp.Body.Close()
-    body, _ := ioutil.ReadAll(resp.Body)
-    return body
 }

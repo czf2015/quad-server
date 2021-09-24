@@ -13,7 +13,7 @@ type Contact struct {
 	Message string `form:"message" json:"message" xml:"message" binding:"required,min=20,max=2000"`
 }
 
-func Contactus(c *gin.Context) {
+func ContactusApi(c *gin.Context) {
 	var json Contact
 	if err := c.ShouldBindJSON(&json); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

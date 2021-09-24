@@ -13,7 +13,7 @@ type SignedAgreementRequest struct {
 	Id string `json:"id"`
 }
 
-func UnsignedAgreements(c *gin.Context) {
+func UnsignedAgreementsApi(c *gin.Context) {
 	claims, _ := jwt.ParseToken(c.Query("token"))
 	user := models.GetUserById(claims.Id)
 
@@ -22,7 +22,7 @@ func UnsignedAgreements(c *gin.Context) {
 	})
 }
 
-func SignAgreement(c *gin.Context) {
+func SignAgreementApi(c *gin.Context) {
 	claims, _ := jwt.ParseToken(c.Query("token"))
 	user := models.GetUserById(claims.Id)
 

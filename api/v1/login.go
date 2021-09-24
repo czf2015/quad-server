@@ -33,7 +33,7 @@ type PasswordResetJson struct {
 	ConfirmPassword string `form:"confirm_password" json:"confirm_password" xml:"confirm_password" binding:"required"`
 }
 
-func Login(c *gin.Context) {
+func LoginApi(c *gin.Context) {
 	var json Account
 	if err := c.ShouldBindJSON(&json); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -71,17 +71,17 @@ func Login(c *gin.Context) {
 	}
 }
 
-func Logout(c *gin.Context) {
+func LogoutApi(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Successfully logged out"})
 }
 
-func LoginStatus(c *gin.Context) {
+func LoginStatusApi(c *gin.Context) {
 	claims, _ := jwt.ParseToken(c.Query("token"))
 	refreshToken := jwt.RefreshToken(*claims)
 	c.JSON(http.StatusOK, gin.H{"status": true, "name": claims.Name, "persistence": claims.Persistence, "refreshToken": refreshToken})
 }
 
-func SendResetPassword(c *gin.Context) {
+func SendResetPasswordApi(c *gin.Context) {
 	var resetJson SendPasswordResetJson
 	if err := c.ShouldBindJSON(&resetJson); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -96,7 +96,7 @@ func SendResetPassword(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"msg": "Please check your email."})
 }
 
-func ResetPassword(c *gin.Context) {
+func ResetPasswordApi(c *gin.Context) {
 	var resetJson PasswordResetJson
 	if err := c.ShouldBindJSON(&resetJson); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Error: invalid data."})
@@ -127,7 +127,7 @@ func ResetPassword(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Success."})
 }
 
-func ConfirmSignUp(c *gin.Context) {
+func ConfirmSignUpApi(c *gin.Context) {
 	email := c.Query("email")
 	code  := c.Query("code")
 	if len(email) == 0 || len(code) == 0 {

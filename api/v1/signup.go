@@ -20,7 +20,7 @@ type Signature struct {
 	Website         string `form:"website" json:"website" xml:"website"`
 }
 
-func Signup(c *gin.Context) {
+func SignupApi(c *gin.Context) {
 	var json Signature
 	if err := c.ShouldBindJSON(&json); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

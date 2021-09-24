@@ -11,7 +11,7 @@ import (
 	"goserver/models"
 )
 
-func GetLast30DaysReport(c *gin.Context) {
+func GetLast30DaysReportApi(c *gin.Context) {
     token := c.Query("token")
     claims, _ := jwt.ParseToken(token)
     user := models.GetUserById(claims.Id)

@@ -30,20 +30,20 @@ func init()  {
 
 	apiv1 := Router.Group("/api/v1")
 	{
-		apiv1.POST("/login", v1.Login)
-		apiv1.GET("/logout", v1.Logout)
-		apiv1.POST("/signup", v1.Signup)
-		apiv1.POST("/send-reset-password", v1.SendResetPassword)
-		apiv1.POST("/reset-password", v1.ResetPassword)
-		apiv1.POST("/contactus", v1.Contactus)
-		apiv1.GET("/confirm-signup", v1.ConfirmSignUp)
+		apiv1.POST("/login", v1.LoginApi)
+		apiv1.GET("/logout", v1.LogoutApi)
+		apiv1.POST("/signup", v1.SignupApi)
+		apiv1.POST("/send-reset-password", v1.SendResetPasswordApi)
+		apiv1.POST("/reset-password", v1.ResetPasswordApi)
+		apiv1.POST("/contactus", v1.ContactusApi)
+		apiv1.GET("/confirm-signup", v1.ConfirmSignUpApi)
 	}
 	apiv1.Use(middlewares.JWT())
 	{
-		apiv1.GET("/login-status", v1.LoginStatus)
-		apiv1.GET("/report/last-30-days", v1.GetLast30DaysReport)
-		apiv1.GET("/agreement/unsigned", v1.UnsignedAgreements)
-		apiv1.POST("/agreement/sign", v1.SignAgreement)
+		apiv1.GET("/login-status", v1.LoginStatusApi)
+		apiv1.GET("/report/last-30-days", v1.GetLast30DaysReportApi)
+		apiv1.GET("/agreement/unsigned", v1.UnsignedAgreementsApi)
+		apiv1.POST("/agreement/sign", v1.SignAgreementApi)
 	}
 
 	apiv2 := Router.Group("/api/v2")

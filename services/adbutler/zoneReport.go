@@ -2,8 +2,6 @@ package adbutler
 
 import (
 	"time"
-	"encoding/json"
-	"strings"
 )
 
 type ZoneDailyReportResponse struct {
@@ -30,41 +28,6 @@ type ZoneDailyReport struct {
 	Cpa float64 `json:"e_cpa"`
 }
 
-type ZoneBlankLogsResponse struct {
-	Data []ZoneBlankLogs `json:"data"`
-}
-
-type ZoneBlankLogs struct {
-	Type string `json:"type"`
-	Id int `json:"id"`
-	Summary ZoneDailyBlankLog `json:"summary"`
-	Details []ZoneDailyBlankLog `json:"details"`
-}
-
-type SpecialDate time.Time
-
-type ZoneDailyBlankLog struct {
-	StartDate SpecialDate `json:"start_date,string"`
-	Blanks int `json:"blanks"`
-}
-
-func (sd *SpecialDate) UnmarshalJSON(input []byte) error {
-    strInput := string(input)
-	strInput = strings.Trim(strInput, `"`)
-	utc, _ := time.LoadLocation("America/New_York")
-    newTime, err := time.Parse("2006-01-02 MST", strInput + " EDT")
-    if err != nil {
-        return err
-    }
-
-    *sd = SpecialDate(newTime.In(utc))
-    return nil
-}
-
-func (sd SpecialDate) MarshalJSON() ([]byte, error) {
-    return json.Marshal(time.Time(sd))
-}
-
 func (report *ZoneDailyReport) CalcPublisherRevShare(revShare float64) {
 	if report.Responses > 0 {
 		report.Requests = report.Responses
@@ -86,16 +49,6 @@ func (response *ZoneDailyReportResponse) CalcPublisherRevShare(revShare float64)
 			response.Data[i].Details[j].CalcPublisherRevShare(revShare)
 		}
 	}
-}
-
-func (response ZoneBlankLogsResponse) GetZoneBlankLogsById(zoneId int) (logs ZoneBlankLogs) {
-	for _, blankLogs := range response.Data {
-		if blankLogs.Id == zoneId {
-			logs = blankLogs
-			break
-		}
-	}
-	return
 }
 
 func (response *ZoneDailyReportResponse) CombineBlankLogs(blankLogsResponse ZoneBlankLogsResponse) {
