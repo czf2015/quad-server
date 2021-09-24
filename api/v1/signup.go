@@ -7,6 +7,7 @@ import (
 
 	"goserver/models"
 	"goserver/libs/db"
+	"goserver/libs/utils"
 )
 
 type Signature struct {
@@ -38,14 +39,14 @@ func Signup(c *gin.Context) {
 		return
 	}
 
-	user := models.User{Base: models.Base{ID: models.GenerateUuid()}, FirstName: json.FirstName, LastName: json.LastName, Email: json.Email, Password: models.EncryptPassword(json.Password), Phone: json.Phone, Website: json.Website}
+	user := models.User{Base: models.Base{ID: utils.GenerateUuid()}, FirstName: json.FirstName, LastName: json.LastName, Email: json.Email, Password: utils.EncryptPassword(json.Password), Phone: json.Phone, Website: json.Website}
 	db.Create(&user)
-	activation := models.Activation{Base: models.Base{ID: models.GenerateUuid()}, UserId: user.ID}
+	activation := models.Activation{Base: models.Base{ID: utils.GenerateUuid()}, UserId: user.ID}
 	db.Create(&activation)
 
 	c.JSON(200, gin.H{
 		"message": "You have signed up successfully. Please check you email for instructions to confirm your email address.",
 	})
 
-	SendWelcomeEmail(json.Email, models.MakeConfirmationLink(user, activation.ID))
+	SendWelcomeEmail(json.Email, user.MakeConfirmationLink(activation.ID))
 }

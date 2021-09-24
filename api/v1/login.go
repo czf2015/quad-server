@@ -10,6 +10,7 @@ import (
 	"goserver/libs/e"
 	"goserver/libs/jwt"
 	"goserver/libs/db"
+	"goserver/libs/utils"
 )
 
 const (
@@ -43,12 +44,12 @@ func Login(c *gin.Context) {
 	code := e.ERROR_AUTH
 	auth := models.CheckAuth(json.Email, json.Password)
 	if auth.Status == e.SUCCESS {
-		persistence := models.GenerateUuid()
+		persistence := utils.GenerateUuid()
 		token, err := jwt.GenerateToken(auth.User.ID, auth.User.FirstName + " " + auth.User.LastName, persistence)
 		if err != nil {
 			code = e.ERROR_AUTH_TOKEN
 		} else {
-			models.LogUserPersistence(auth.User, persistence)
+			auth.User.LogUserPersistence(persistence)
 			data["token"] = token
 			code = e.SUCCESS
 		}
@@ -88,9 +89,9 @@ func SendResetPassword(c *gin.Context) {
 	var user models.User
 	db.DB().Where(models.User{Email: resetJson.Email}).Where("deleted_at IS NULL").First(&user)
 	if len(user.ID) > 0 {
-		activation := models.Activation{Base: models.Base{ID: models.GenerateUuid()}, UserId: user.ID}
+		activation := models.Activation{Base: models.Base{ID: utils.GenerateUuid()}, UserId: user.ID}
 		db.Create(&activation)
-		SendResetPasswordEmail(user.Email, models.MakePasswordResetLink(user, activation.ID))
+		SendResetPasswordEmail(user.Email, user.MakePasswordResetLink(activation.ID))
 	}
 	c.JSON(http.StatusOK, gin.H{"msg": "Please check your email."})
 }
@@ -121,7 +122,7 @@ func ResetPassword(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "You have reset your password."})
 		return
 	}
-	db.DB().Exec("UPDATE user SET password=? WHERE id = ?", models.EncryptPassword(resetJson.Password), user.ID)
+	db.DB().Exec("UPDATE user SET password=? WHERE id = ?", utils.EncryptPassword(resetJson.Password), user.ID)
 	db.DB().Exec("UPDATE activation SET completed_at=? WHERE id = ?", time.Now().Format("2006-01-02 15:04:05"), activation.ID)
 	c.JSON(http.StatusOK, gin.H{"message": "Success."})
 }
