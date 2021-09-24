@@ -1,0 +1,23 @@
+{{ define "redirect.tmpl" }}
+<html>
+<body>
+<h1 style="text-align: center">
+	{{ .message }}
+</h1>
+<h3 id="redirect-msg" style="text-align: center;font-weight: 400;">
+	Redirecting to home page in {{ .seconds }} seconds.
+</h3>
+<script type="text/javascript">
+    t = {{ .seconds }};
+    document.getElementById('redirect-msg').innerHTML = "Redirecting to home page in " + t + " seconds.";
+    setInterval(function() {
+        t--;
+        document.getElementById('redirect-msg').innerHTML = "Redirecting to home page in " + t + " seconds.";
+        if (t <= 0) {
+            window.location.href = "/";
+        }
+    }, 1000)
+</script>
+</body>
+</html>
+{{ end }}
