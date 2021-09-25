@@ -11,6 +11,7 @@ import (
 	"goserver/libs/jwt"
 	"goserver/libs/db"
 	"goserver/libs/utils"
+	"goserver/libs/mail"
 )
 
 const (
@@ -91,7 +92,7 @@ func SendResetPasswordApi(c *gin.Context) {
 	if len(user.ID) > 0 {
 		activation := models.Activation{Base: models.Base{ID: utils.GenerateUuid()}, UserId: user.ID}
 		db.Create(&activation)
-		SendResetPasswordEmail(user.Email, user.MakePasswordResetLink(activation.ID))
+		mail.SendResetPasswordEmail(user.Email, user.MakePasswordResetLink(activation.ID))
 	}
 	c.JSON(http.StatusOK, gin.H{"msg": "Please check your email."})
 }

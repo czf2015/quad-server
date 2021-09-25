@@ -8,6 +8,7 @@ import (
 	"goserver/models"
 	"goserver/libs/db"
 	"goserver/libs/utils"
+	"goserver/libs/mail"
 )
 
 type Signature struct {
@@ -48,5 +49,5 @@ func SignupApi(c *gin.Context) {
 		"message": "You have signed up successfully. Please check you email for instructions to confirm your email address.",
 	})
 
-	SendWelcomeEmail(json.Email, user.MakeConfirmationLink(activation.ID))
+	mail.SendWelcomeEmail(json.Email, user.MakeConfirmationLink(activation.ID))
 }

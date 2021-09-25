@@ -4,6 +4,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	
+	"goserver/libs/mail"
 )
 
 type Contact struct {
@@ -24,5 +26,5 @@ func ContactusApi(c *gin.Context) {
 		"message": "Thanks for contacting us. We will get back to you shortly.",
 	})
 
-	SendContactUsEmail(json.Email, json.Name+" from "+json.Website+" has a message to us.", json.Message)
+	mail.SendContactUsEmail(json.Email, json.Name+" from "+json.Website+" has a message to us.", json.Message)
 }
