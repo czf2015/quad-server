@@ -19,7 +19,7 @@ var (
 	supportEmail = conf.GetSectionKey("app", "SUPPORT_EMAIL").String()
 )
 
-func getMailableClient() *http.Client {
+func getSendMailClient() *http.Client {
 	b, err := ioutil.ReadFile("conf/credentials.json")
 	if err != nil {
 		log.Fatalf("Unable to read client secret file: %v", err)
@@ -34,7 +34,7 @@ func getMailableClient() *http.Client {
 }
 
 func SendEmail(to string, cc string, bcc string, replyTo string, subject string, htmlBody string) {
-	srv, err := gmail.New(getMailableClient())
+	srv, err := gmail.New(getSendMailClient())
 	if err != nil {
 		log.Fatalf("Unable to retrieve gmail Client %v", err)
 	}
