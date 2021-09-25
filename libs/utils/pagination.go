@@ -7,11 +7,11 @@ import (
 	"goserver/libs/conf"
 )
 
+var pageSize = conf.GetSectionKey("app", "PAGE_SIZE").MustInt()
+
 func GetPage(c *gin.Context) int {
 	result := 0
 	page, _ := com.StrTo(c.Query("page")).Int()
-	appCfg, _ := conf.GetSection("app")
-	pageSize := appCfg.Key("PAGE_SIZE").MustInt()
 	if page > 0 {
 		result = (page - 1) * pageSize
 	}

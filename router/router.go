@@ -11,17 +11,14 @@ import (
 	v2 "goserver/api/v2"
 )
 
-var (
-	Router *gin.Engine
-	runMode = conf.GetSectionKey("base", "RUN_MODE").String()
-)
+var Router *gin.Engine
 
 func init()  {
+	runMode := conf.GetSectionKey("base", "RUN_MODE").String()
 	gin.SetMode(runMode)
 
 	Router = gin.New()
 
-	
 	store := sessions.NewCookieStore([]byte("secret"))
 	Router.Use(sessions.Sessions("mysession", store))
 	
