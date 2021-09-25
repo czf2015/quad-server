@@ -14,6 +14,11 @@ import (
 	"goserver/libs/oauth2"
 )
 
+var (
+	adminEmail = conf.GetSectionKey("app", "ADMIN_EMAIL").String()
+	supportEmail = conf.GetSectionKey("app", "SUPPORT_EMAIL").String()
+)
+
 func getMailableClient() *http.Client {
 	b, err := ioutil.ReadFile("conf/credentials.json")
 	if err != nil {
@@ -43,14 +48,14 @@ func SendEmail(to string, cc string, bcc string, replyTo string, subject string,
 	}
 	if len(bcc) == 0 {
 		// just to monitor all emails through adminEmail by default
-		bcc = conf.GetSectionKey("app", "ADMIN_EMAIL").String()
+		bcc = adminEmail
 	}
 	if len(bcc) > 0 {
 		other += "Bcc:" + bcc + "\r\n"
 	}
 
 	var message gmail.Message
-	temp := []byte("From: " + conf.GetSectionKey("app", "ADMIN_EMAIL").String() + "\r\n" +
+	temp := []byte("From: " + adminEmail + "\r\n" +
 		"reply-to: " + replyTo + "\r\n" +
 		"To:  " + to + "\r\n" +
 		other +
@@ -71,12 +76,12 @@ func SendEmail(to string, cc string, bcc string, replyTo string, subject string,
 }
 
 func NotifySupport(replyTo string, title string, msg string) {
-	SendEmail(conf.GetSectionKey("app", "SUPPORT_EMAIL").String(), "", "", replyTo, title, msg)
+	SendEmail(supportEmail, "", "", replyTo, title, msg)
 }
 
 func SendContactUsEmail(replyTo string, title string, msg string) {
 	message := "<pre>" + msg + "</pre>"
-	SendEmail(conf.GetSectionKey("app", "SUPPORT_EMAIL").String(), "", "", replyTo, title, message)
+	SendEmail(supportEmail, "", "", replyTo, title, message)
 	receipt := "<div>We will get back to you after receiving your email.</div>" +
 		"<br><div>------Below is your message to us-----</div>" +
 		message
