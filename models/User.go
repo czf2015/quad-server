@@ -20,17 +20,19 @@ type User struct {
 	Agreements []Agreement `gorm:"many2many:user_agreement;"`
 }
 
+var appUrl = conf.GetSectionKey("app", "APP_URL").String()
+
 func GetUserById(id string) (user User) {
 	db.DB().Where("id = ?", id).Find(&user)
 	return;
 }
 
 func (user User) MakeConfirmationLink(confirmation string) string {
-    return conf.GetSectionKey("app", "APP_URL").String() + "/api/confirm-signup?email=" + user.Email + "&code=" + confirmation
+    return appUrl + "/api/confirm-signup?email=" + user.Email + "&code=" + confirmation
 }
 
 func (user User) MakePasswordResetLink(code string) string {
-    return conf.GetSectionKey("app", "APP_URL").String() + "/reset-password?email=" + user.Email + "&code=" + code
+    return appUrl + "/reset-password?email=" + user.Email + "&code=" + code
 }
 
 func (user User) LogUserPersistence(persistence string) {

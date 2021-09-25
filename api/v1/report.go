@@ -11,6 +11,8 @@ import (
 	"goserver/models"
 )
 
+var apiKey = conf.GetSectionKey("app", "ADBUTLER_API_KEY").String()
+
 func GetLast30DaysReportApi(c *gin.Context) {
     token := c.Query("token")
     claims, _ := jwt.ParseToken(token)
@@ -19,7 +21,7 @@ func GetLast30DaysReportApi(c *gin.Context) {
         return approved.Domain
     }).([]string)
 
-	api := adbutler.Api{ApiKey: conf.GetSectionKey("app", "ADBUTLER_API_KEY").String()}
+	api := adbutler.Api{ApiKey: apiKey}
 
     publishers := api.GetPublishers()
     var myPubs []adbutler.Publisher

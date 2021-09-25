@@ -11,10 +11,13 @@ import (
 	v2 "goserver/api/v2"
 )
 
-var Router *gin.Engine
+var (
+	Router *gin.Engine
+	runMode = conf.GetSectionKey("base", "RUN_MODE").String()
+)
 
 func init()  {
-	gin.SetMode(conf.GetSectionKey("base", "RUN_MODE").String())
+	gin.SetMode(runMode)
 
 	Router = gin.New()
 
