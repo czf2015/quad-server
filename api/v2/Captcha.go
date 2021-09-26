@@ -11,6 +11,10 @@ type Captcha struct {
 	Base64 string `json:"base64"`
 }
 
+type CaptchaDto struct {
+	Captcha Captcha `json:"captcha"`
+}
+
 func GetCaptchaApi(c *gin.Context)  {
 	store := base64Captcha.DefaultMemStore
 	driver := base64Captcha.NewDriverDigit(80, 240, 6, 0.7, 80)
@@ -22,9 +26,11 @@ func GetCaptchaApi(c *gin.Context)  {
 		c.JSON(200, gin.H{
 			"code": 200,
 			"msg": "success",
-			"data": Captcha{
-				Id: id,
-				Base64: base64,
+			"data": CaptchaDto{
+				Captcha: Captcha{
+					Id: id,
+					Base64: base64,
+				},
 			},
 		})
 	}
