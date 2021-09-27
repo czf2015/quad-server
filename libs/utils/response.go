@@ -5,8 +5,8 @@ import (
 	"io/ioutil"
 )
 
-func GetResponseBody(resp *http.Response) []byte {
-	defer resp.Body.Close()
-	body, _ := ioutil.ReadAll(resp.Body)
+func GetResponseBody(res *http.Response) []byte {
+	defer res.Body.Close()
+	body, _ := ioutil.ReadAll(res.Body)
 	return body
 }

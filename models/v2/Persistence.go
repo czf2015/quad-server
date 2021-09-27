@@ -1,4 +1,4 @@
-package models2
+package models_v2
 
 type Persistence struct {
 	Base

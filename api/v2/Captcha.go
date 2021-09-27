@@ -1,4 +1,4 @@
-package apiv2
+package api_v2
 
 import (
 	"net/http"

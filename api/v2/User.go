@@ -1,4 +1,4 @@
-package apiv2
+package api_v2
 
 import (
 	"net/http"
@@ -8,7 +8,7 @@ import (
 
 	"goserver/libs/e"
 	"goserver/libs/jwt"
-	"goserver/libs/db"
+	"goserver/libs/gorm"
 	"goserver/libs/utils"
 	"goserver/libs/mail"
 	models "goserver/models/v2"
@@ -23,10 +23,10 @@ type Auth struct {
 func checkAuth(userName, password, captchaID, captchaCode string) (auth Auth) {
 	auth.Status = e.ERROR_AUTH
 	var user models.User
-	db.DB().Where(models.User{Name: userName, Password: utils.EncryptPassword(password)}).First(&user)
+	gorm.GetDB().Where(models.User{Name: userName, Password: utils.EncryptPassword(password)}).First(&user)
 	if len(user.ID) > 0 {
 			var activation models.Activation
-			db.DB().Where(models.Activation{UserId: user.ID}).Where("completed_at IS NOT NULL").First(&activation)
+			gorm.GetDB().Where(models.Activation{UserId: user.ID}).Where("completed_at IS NOT NULL").First(&activation)
 			auth.User = user
 			auth.Activation = activation
 			if len(activation.CompletedAt) > 0 {
@@ -117,14 +117,14 @@ func ResetPasswordApi(c *gin.Context) {
 	}
 
 	var user models.User
-	db.DB().Where(models.User{Name: params.UserName}).Where("deleted_at IS NULL").First(&user)
+	gorm.GetDB().Where(models.User{Name: params.UserName}).Where("deleted_at IS NULL").First(&user)
 	if len(user.ID) == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Error: invalid user."})
 		return
 	}
 
 	var activation models.Activation
-	db.DB().Where(models.Activation{UserId: user.ID}).First(&activation)
+	gorm.GetDB().Where(models.Activation{UserId: user.ID}).First(&activation)
 	if len(activation.ID) == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Error: invalid activation."})
 		return
@@ -134,14 +134,15 @@ func ResetPasswordApi(c *gin.Context) {
 		return
 	}
 
-	db.DB().Exec("UPDATE user SET password=? WHERE id = ?", utils.EncryptPassword(params.Password), user.ID)
-	db.DB().Exec("UPDATE activation SET completed_at=? WHERE id = ?", time.Now().Format("2006-01-02 15:04:05"), activation.ID)
+	gorm.GetDB().Exec("UPDATE user SET password=? WHERE id = ?", utils.EncryptPassword(params.Password), user.ID)
+	gorm.GetDB().Exec("UPDATE activation SET completed_at=? WHERE id = ?", time.Now().Format("2006-01-02 15:04:05"), activation.ID)
 	c.JSON(http.StatusOK, gin.H{"message": "Successfully reset password!" })
 }
 
 type SignupParams struct {
-	UserName    string `form:"user_name" json:"user_name"`
-	Email           string `form:"email" json:"email" xml:"email" binding:"required,email"`
+	UserName    string `form:"user_name" json:"user_name" binding:"required"`
+	RoleName    string `form:"role_name" json:"role_name"`
+	Email           string `form:"email" json:"email" xml:"email" binding:"required"`
 	Phone           string `form:"phone" json:"phone" xml:"phone"`
 	Password        string `form:"password" json:"password" xml:"password" binding:"required,min=6"`
 	ConfirmPassword string `form:"confirm_password" json:"confirm_password" xml:"confirm_password" binding:"required,min=6"`
@@ -160,16 +161,16 @@ func SignupApi(c *gin.Context) {
 	}
 
 	var user models.User
-	db.DB().Where(models.User{Email: params.Email}).Where("deleted_at IS NULL").First(&user)
+	gorm.GetDB().Where(models.User{Email: params.Email}).Where("deleted_at IS NULL").First(&user)
 	if len(user.ID) > 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Email already registered."})
 		return
 	}
 
-	user = models.User{Base: models.Base{ID: utils.GenerateUuid()}, Name: params.UserName, Email: params.Email, Password: utils.EncryptPassword(params.Password)}
-	db.Create(&user)
+	user = models.User{Base: models.Base{ID: utils.GenerateUuid()}, Name: params.UserName, RoleName: params.RoleName, Email: params.Email, Password: utils.EncryptPassword(params.Password)}
+	gorm.Create(&user)
 	activation := models.Activation{Base: models.Base{ID: utils.GenerateUuid()}, UserId: user.ID}
-	db.Create(&activation)
+	gorm.Create(&activation)
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "You have signed up successfully. Please check you email for instructions to confirm your email address.",

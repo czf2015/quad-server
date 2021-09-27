@@ -1,4 +1,4 @@
-package apiv1
+package api_v1
 
 import (
 	"net/http"
@@ -6,7 +6,7 @@ import (
 
 	"goserver/libs/jwt"
 	"goserver/models"
-	"goserver/libs/db"
+	"goserver/libs/gorm"
 )
 
 type SignedAgreementRequest struct {
@@ -33,7 +33,7 @@ func SignAgreementApi(c *gin.Context) {
 	}
 
 	if len(signedAgreement.Id) > 0 {
-		db.DB().Exec("INSERT INTO user_agreement (user_id, agreement_id) values (?, ?)", user.ID, signedAgreement.Id)
+		gorm.GetDB().Exec("INSERT INTO user_agreement (user_id, agreement_id) values (?, ?)", user.ID, signedAgreement.Id)
 	}
 
 	c.JSON(http.StatusOK, gin.H{

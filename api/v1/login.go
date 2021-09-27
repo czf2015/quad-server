@@ -1,4 +1,4 @@
-package apiv1
+package api_v1
 
 import (
 	"net/http"
@@ -9,7 +9,7 @@ import (
 	"goserver/models"
 	"goserver/libs/e"
 	"goserver/libs/jwt"
-	"goserver/libs/db"
+	"goserver/libs/gorm"
 	"goserver/libs/utils"
 	"goserver/libs/mail"
 )
@@ -88,10 +88,10 @@ func SendResetPasswordApi(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 	var user models.User
-	db.DB().Where(models.User{Email: resetJson.Email}).Where("deleted_at IS NULL").First(&user)
+	gorm.GetDB().Where(models.User{Email: resetJson.Email}).Where("deleted_at IS NULL").First(&user)
 	if len(user.ID) > 0 {
 		activation := models.Activation{Base: models.Base{ID: utils.GenerateUuid()}, UserId: user.ID}
-		db.Create(&activation)
+		gorm.Create(&activation)
 		mail.SendResetPasswordEmail(user.Email, user.MakePasswordResetLink(activation.ID))
 	}
 	c.JSON(http.StatusOK, gin.H{"msg": "Please check your email."})
@@ -108,13 +108,13 @@ func ResetPasswordApi(c *gin.Context) {
 		return
 	}
 	var user models.User
-	db.DB().Where(models.User{Email: resetJson.Email}).Where("deleted_at IS NULL").First(&user)
+	gorm.GetDB().Where(models.User{Email: resetJson.Email}).Where("deleted_at IS NULL").First(&user)
 	if len(user.ID) == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Error: invalid email."})
 		return
 	}
 	var activation models.Activation
-	db.DB().Where(models.Activation{Base: models.Base{ID: resetJson.Code}, UserId: user.ID}).First(&activation)
+	gorm.GetDB().Where(models.Activation{Base: models.Base{ID: resetJson.Code}, UserId: user.ID}).First(&activation)
 	if len(activation.ID) == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Error: invalid code."})
 		return
@@ -123,8 +123,8 @@ func ResetPasswordApi(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "You have reset your password."})
 		return
 	}
-	db.DB().Exec("UPDATE user SET password=? WHERE id = ?", utils.EncryptPassword(resetJson.Password), user.ID)
-	db.DB().Exec("UPDATE activation SET completed_at=? WHERE id = ?", time.Now().Format("2006-01-02 15:04:05"), activation.ID)
+	gorm.GetDB().Exec("UPDATE user SET password=? WHERE id = ?", utils.EncryptPassword(resetJson.Password), user.ID)
+	gorm.GetDB().Exec("UPDATE activation SET completed_at=? WHERE id = ?", time.Now().Format("2006-01-02 15:04:05"), activation.ID)
 	c.JSON(http.StatusOK, gin.H{"message": "Success."})
 }
 
@@ -136,13 +136,13 @@ func ConfirmSignUpApi(c *gin.Context) {
 		return
 	}
 	var user models.User
-	db.DB().Where(models.User{Email: email}).Where("deleted_at IS NULL").First(&user)
+	gorm.GetDB().Where(models.User{Email: email}).Where("deleted_at IS NULL").First(&user)
 	if len(user.ID) == 0 {
 		c.HTML(http.StatusOK, "redirect.tmpl", gin.H{"message": "Error.", "url": "/", "seconds": 3})
 		return
 	}
 	var activation models.Activation
-	db.DB().Where(models.Activation{Base: models.Base{ID: code}}).First(&activation)
+	gorm.GetDB().Where(models.Activation{Base: models.Base{ID: code}}).First(&activation)
 	if len(activation.ID) == 0 {
 		c.HTML(http.StatusOK, "redirect.tmpl", gin.H{"message": "Error.", "url": "/", "seconds": 3})
 		return
@@ -151,7 +151,7 @@ func ConfirmSignUpApi(c *gin.Context) {
 		c.HTML(http.StatusOK, "redirect.tmpl", gin.H{"message": "You are already confirmed.", "url": "/", "seconds": 3})
 		return
 	}
-	db.DB().Model(&activation).Update("completed_at", time.Now().Format("2006-01-02 15:04:05"))
+	gorm.GetDB().Model(&activation).Update("completed_at", time.Now().Format("2006-01-02 15:04:05"))
 	c.HTML(http.StatusOK, "redirect.tmpl", gin.H{"message": "You have been successfully confirmed.", "url": "/", "seconds": 3})
 	return
 }

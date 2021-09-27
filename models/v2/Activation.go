@@ -1,5 +1,5 @@
 
-package models2
+package models_v2
 
 type Activation struct {
 	Base

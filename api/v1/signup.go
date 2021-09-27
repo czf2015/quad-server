@@ -1,4 +1,4 @@
-package apiv1
+package api_v1
 
 import (
 	"net/http"
@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"goserver/models"
-	"goserver/libs/db"
+	"goserver/libs/gorm"
 	"goserver/libs/utils"
 	"goserver/libs/mail"
 )
@@ -34,16 +34,16 @@ func SignupApi(c *gin.Context) {
 	}
 
 	var exist models.User
-	db.DB().Where(models.User{Email: json.Email}).Where("deleted_at IS NULL").First(&exist)
+	gorm.GetDB().Where(models.User{Email: json.Email}).Where("deleted_at IS NULL").First(&exist)
 	if len(exist.ID) > 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "User already exists."})
 		return
 	}
 
 	user := models.User{Base: models.Base{ID: utils.GenerateUuid()}, FirstName: json.FirstName, LastName: json.LastName, Email: json.Email, Password: utils.EncryptPassword(json.Password), Phone: json.Phone, Website: json.Website}
-	db.Create(&user)
+	gorm.Create(&user)
 	activation := models.Activation{Base: models.Base{ID: utils.GenerateUuid()}, UserId: user.ID}
-	db.Create(&activation)
+	gorm.Create(&activation)
 
 	c.JSON(200, gin.H{
 		"message": "You have signed up successfully. Please check you email for instructions to confirm your email address.",

@@ -1,10 +1,10 @@
-package models
+package models_v1
 
 import (    
 	"github.com/thoas/go-funk"
 
     "goserver/libs/conf"
-    "goserver/libs/db"
+    "goserver/libs/gorm"
 )
 
 type User struct {
@@ -23,7 +23,7 @@ type User struct {
 var appUrl = conf.GetSectionKey("app", "APP_URL").String()
 
 func GetUserById(id string) (user User) {
-	db.DB().Where("id = ?", id).Find(&user)
+	gorm.GetDB().Where("id = ?", id).Find(&user)
 	return;
 }
 
@@ -37,17 +37,17 @@ func (user User) MakePasswordResetLink(code string) string {
 
 func (user User) LogUserPersistence(persistence string) {
     p := Persistence{Base{ID: persistence}, user.ID}
-    db.DB().Create(&p)
+    gorm.GetDB().Create(&p)
 }
 
 func (user User) GetApprovedDomains() (approvedDomains []ApprovedDomain) {
-    db.DB().Where(ApprovedDomain{UserId: user.ID, Approved: true}).Find(&approvedDomains)
+    gorm.GetDB().Where(ApprovedDomain{UserId: user.ID, Approved: true}).Find(&approvedDomains)
     return
 }
 
 func (user User) GetLatestUnsignedAgreements() (unsigned []Agreement) {
     var agreements []Agreement
-    db.DB().Model(&user).Related(&agreements, "Agreements")
+    gorm.GetDB().Model(&user).Related(&agreements, "Agreements")
     ids := funk.Map(agreements, func (agreement Agreement) string {
         return agreement.ID
     }).([]string)

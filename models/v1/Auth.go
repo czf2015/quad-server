@@ -1,8 +1,8 @@
-package models
+package models_v1
 
 import (    
 	"goserver/libs/e"
-	"goserver/libs/db"
+	"goserver/libs/gorm"
 	"goserver/libs/utils"
 )
 
@@ -15,10 +15,10 @@ type Auth struct {
 func CheckAuth(email, password string) (auth Auth) {
 	auth.Status = e.ERROR_AUTH
 	var user User
-	db.DB().Where(User{Email: email, Password: utils.EncryptPassword(password)}).First(&user)
+	gorm.GetDB().Where(User{Email: email, Password: utils.EncryptPassword(password)}).First(&user)
 	if len(user.ID) > 0 {
 			var activation Activation
-			db.DB().Where(Activation{UserId: user.ID}).Where("completed_at IS NOT NULL").First(&activation)
+			gorm.GetDB().Where(Activation{UserId: user.ID}).Where("completed_at IS NOT NULL").First(&activation)
 			auth.User = user
 			auth.Activation = activation
 			if len(activation.CompletedAt) > 0 {

@@ -1,6 +1,8 @@
 package router
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
 
@@ -28,6 +30,8 @@ func init()  {
 	
 	Router.LoadHTMLGlob("templates/*")
 
+	Router.StaticFS("/static", http.Dir("./static"))
+
 	// apiv1 := Router.Group("/api/v1")
 	// {
 	// 	apiv1.POST("/login", v1.LoginApi)
@@ -48,10 +52,20 @@ func init()  {
 
 	apiv2 := Router.Group("/api/v2")
 	{
+		// user
 		apiv2.GET("/captcha", v2.GetCaptchaApi)
 		apiv2.POST("/login", v2.LoginApi)
 		apiv2.GET("/logout", v2.LogoutApi)
 		apiv2.POST("/signup", v2.SignupApi)
 		apiv2.POST("/reset-password", v2.ResetPasswordApi)
+		// address
+		apiv2.POST("/address", v2.CreateAddressApi)
+		apiv2.POST("/address-list", v2.CreateAddressListApi)
+		apiv2.GET("/address", v2.GetAddressApi)
+		apiv2.GET("/address-list", v2.GetAddressListApi)
+		apiv2.PUT("/address", v2.UpdateAddressApi)
+		apiv2.PUT("/address-list", v2.UpdateAddressListApi)
+		apiv2.DELETE("/address", v2.DeleteAddressApi)
+		apiv2.DELETE("/address-list", v2.DeleteAddressListApi)
 	}
 }

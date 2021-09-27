@@ -1,4 +1,4 @@
-package models
+package models_v1
 
 type Base struct {
 	ID         string `gorm:"primary_key" json:"id"`

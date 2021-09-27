@@ -1,4 +1,4 @@
-package models
+package models_v1
 
 type ApprovedDomain struct {
 	Base
