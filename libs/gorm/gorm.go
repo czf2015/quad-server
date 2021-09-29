@@ -12,10 +12,10 @@ import (
 
 var db *gorm.DB
 
-func init() {
-	dbCfg, err := conf.GetSection("database")
+// DSN格式：[username[:password]@][protocol[(address)]]/gormname[?param1=value1&...&paramN=valueN]
+func getDSN() string {
+	dbCfg, _ := conf.GetSection("database")
 
-	dbType := dbCfg.Key("TYPE").String()
 	dbName := dbCfg.Key("NAME").String()
 	user := dbCfg.Key("USER").String()
 	password := dbCfg.Key("PASSWORD").String()
@@ -23,18 +23,25 @@ func init() {
 	charset := dbCfg.Key("CHARSET").String()
 	parseTime := dbCfg.Key("PARSE_TIME").String()
 	loc := dbCfg.Key("LOC").String()
-
-	// DSN格式：[username[:password]@][protocol[(address)]]/gormname[?param1=value1&...&paramN=valueN]
-	dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=%s&parseTime=%s&loc=%s", user, password, host, dbName, charset, parseTime, loc)
-	db, err = gorm.Open(dbType, dsn)
-	if err != nil {
-		log.Println(err)
-	}
-
+	return fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=%s&parseTime=%s&loc=%s", user, password, host, dbName, charset, parseTime, loc)
+}
+ 
+func configure(db *gorm.DB) {
 	db.SingularTable(true)
 	db.LogMode(true)
 	db.DB().SetMaxIdleConns(10)
 	db.DB().SetMaxOpenConns(100)
+}
+
+func init() {
+	var err error
+	dbType := conf.GetSectionKey("database", "TYPE").String()
+	dsn := getDSN()
+	db, err = gorm.Open(dbType, dsn)
+	if err != nil {
+		log.Println(err)
+	}
+	configure(db)
 }
 
 func GetDB() *gorm.DB {

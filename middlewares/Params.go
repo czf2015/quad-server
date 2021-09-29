@@ -6,7 +6,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func ParseJSON(c *gin.Context, params interface{}) bool {
+type DeleteParams struct {
+	ID string `json:"id"`
+}
+
+type DeleteListParams struct {
+	IDs []string `json:"ids"`
+}
+
+func ParseParams(c *gin.Context, params interface{}) bool {
 	if err := c.ShouldBindJSON(params); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return false

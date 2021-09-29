@@ -62,10 +62,19 @@ func init()  {
 		apiv2.POST("/address", v2.CreateAddressApi)
 		apiv2.POST("/address-list", v2.CreateAddressListApi)
 		apiv2.GET("/address", v2.GetAddressApi)
-		apiv2.GET("/address-list", v2.GetAddressListApi)
+		apiv2.GET("/address-all", v2.GetAllAddressApi)
 		apiv2.PUT("/address", v2.UpdateAddressApi)
 		apiv2.PUT("/address-list", v2.UpdateAddressListApi)
 		apiv2.DELETE("/address", v2.DeleteAddressApi)
 		apiv2.DELETE("/address-list", v2.DeleteAddressListApi)
+		// area
+		apiv2.POST("/area", v2.CreateAreaApi)
+		apiv2.POST("/area-list", v2.CreateAreaListApi)
+		apiv2.GET("/area", v2.GetAreaApi)
+		apiv2.GET("/area-all", v2.GetAllAreaApi)
+		apiv2.PUT("/area", v2.UpdateAreaApi)
+		apiv2.PUT("/area-list", v2.UpdateAreaListApi)
+		apiv2.DELETE("/area", v2.DeleteAreaApi)
+		apiv2.DELETE("/area-list", v2.DeleteAreaListApi)
 	}
 }

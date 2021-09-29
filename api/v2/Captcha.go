@@ -1,9 +1,10 @@
+// https://github.com/mojocn/base64Captcha#233--core-code-captchago
 package api_v2
 
 import (
 	"net/http"
 	"github.com/gin-gonic/gin"
-	"github.com/mojocn/base64Captcha"
+	"goserver/libs/captcha"
 )
 
 type Captcha struct {
@@ -11,14 +12,11 @@ type Captcha struct {
 	Base64 string `json:"base64"`
 }
 
-type CaptchaDto struct {
+type CaptchaResponse struct {
 	Captcha Captcha `json:"captcha"`
 }
 
 func GetCaptchaApi(c *gin.Context)  {
-	store := base64Captcha.DefaultMemStore
-	driver := base64Captcha.NewDriverDigit(80, 240, 6, 0.7, 80)
-	captcha := base64Captcha.NewCaptcha(driver, store)
 	id, base64, err := captcha.Generate()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -26,7 +24,7 @@ func GetCaptchaApi(c *gin.Context)  {
 		c.JSON(200, gin.H{
 			"code": 200,
 			"msg": "success",
-			"data": CaptchaDto{
+			"data": CaptchaResponse{
 				Captcha: Captcha{
 					Id: id,
 					Base64: base64,

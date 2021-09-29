@@ -15,7 +15,7 @@ type AddressList []models.Address
 
 func GetAddressApi(c *gin.Context) {
 	var params models.Address
-	if middlewares.ParseJSON(c, &params) {
+	if middlewares.ParseParams(c, &params) {
 		var data models.Address
 		gorm.Where(&params).First(&data)
 		if len(data.ID) > 0 {
@@ -39,13 +39,13 @@ func DeleteAddressApi(c *gin.Context) {
 }
 
 // 
-func GetAddressListApi(c *gin.Context) {
-	middlewares.GetList(c, &AddressList{})
+func GetAllAddressApi(c *gin.Context) {
+	middlewares.GetAll(c, &AddressList{})
 }
 
 func CreateAddressListApi(c *gin.Context) {
 	var params AddressList
-	if middlewares.ParseJSON(c, &params) {
+	if middlewares.ParseParams(c, &params) {
 		for _, v := range params {
 			gorm.Create(&v)
 		}
@@ -55,7 +55,7 @@ func CreateAddressListApi(c *gin.Context) {
 
 func UpdateAddressListApi(c *gin.Context) {
 	var params AddressList
-	if middlewares.ParseJSON(c, &params) {
+	if middlewares.ParseParams(c, &params) {
 		for _, v := range params {
 			gorm.Updates(&models.Address{}, &v)
 		}
@@ -63,12 +63,9 @@ func UpdateAddressListApi(c *gin.Context) {
 	}
 }
 
-type DeleteListParams struct {
-	IDs []string `json:"ids"`
-}
 func DeleteAddressListApi(c *gin.Context) {
-	var params DeleteListParams
-	if middlewares.ParseJSON(c, &params) {
+	var params middlewares.DeleteListParams
+	if middlewares.ParseParams(c, &params) {
 		for _, v := range params.IDs {
 			gorm.Delete(&models.Address{}, "id = ?", v)
 		}

@@ -11,32 +11,9 @@ import (
 	"goserver/libs/gorm"
 	"goserver/libs/utils"
 	"goserver/libs/mail"
+	"goserver/middlewares"
 	models "goserver/models/v2"
 )
-
-type Auth struct {
-	User models.User
-	Activation models.Activation
-	Status int
-}
-
-func checkAuth(userName, password, captchaID, captchaCode string) (auth Auth) {
-	auth.Status = e.ERROR_AUTH
-	var user models.User
-	gorm.GetDB().Where(models.User{Name: userName, Password: utils.EncryptPassword(password)}).First(&user)
-	if len(user.ID) > 0 {
-			var activation models.Activation
-			gorm.GetDB().Where(models.Activation{UserId: user.ID}).Where("completed_at IS NOT NULL").First(&activation)
-			auth.User = user
-			auth.Activation = activation
-			if len(activation.CompletedAt) > 0 {
-					auth.Status = e.SUCCESS
-			} else {
-					auth.Status = e.ERROR_AUTH_INACTIVE
-			}
-	}
-	return
-}
 
 // 登录传参
 type LoginParams struct {
@@ -53,6 +30,22 @@ type LoginResponse struct {
 	ExpiresAt int64     `json:"expiresAt"`
 }
 
+type ResetPasswordParams struct {
+	// ID string `form:"id" json:"id" xml:"id" binding:"required"`
+	UserName string `form:"user_name" json:"user_name" xml:"user_name" binding:"required"`
+	Password string `form:"password" json:"password" xml:"password" binding:"required"`
+	ConfirmPassword string `form:"confirm_password" json:"confirm_password" xml:"confirm_password" binding:"required"`
+}
+
+type SignupParams struct {
+	UserName    string `form:"user_name" json:"user_name" binding:"required"`
+	RoleName    string `form:"role_name" json:"role_name"`
+	Email           string `form:"email" json:"email" xml:"email" binding:"required"`
+	Phone           string `form:"phone" json:"phone" xml:"phone"`
+	Password        string `form:"password" json:"password" xml:"password" binding:"required,min=6"`
+	ConfirmPassword string `form:"confirm_password" json:"confirm_password" xml:"confirm_password" binding:"required,min=6"`
+}
+
 // 登录接口
 func LoginApi(c *gin.Context) {
 	var params LoginParams
@@ -63,7 +56,7 @@ func LoginApi(c *gin.Context) {
 
 	data := make(map[string]interface{})
 	code := e.ERROR_AUTH
-	auth := checkAuth(params.UserName, params.Password, params.CaptchaID, params.CaptchaCode)
+	auth := middlewares.CheckAuth(params.UserName, params.Password, params.CaptchaID, params.CaptchaCode)
 	if auth.Status == e.SUCCESS {
 		persistence := utils.GenerateUuid()
 		token, err := jwt.GenerateToken(auth.User.ID, auth.User.Name + " " + auth.User.RoleName, persistence)
@@ -93,14 +86,6 @@ func LoginApi(c *gin.Context) {
 func LogoutApi(c *gin.Context) {
 	// TODO
 	c.JSON(http.StatusOK, gin.H{"message": "Successfully logged out!"})
-}
-
-
-type ResetPasswordParams struct {
-	// ID string `form:"id" json:"id" xml:"id" binding:"required"`
-	UserName string `form:"user_name" json:"user_name" xml:"user_name" binding:"required"`
-	Password string `form:"password" json:"password" xml:"password" binding:"required"`
-	ConfirmPassword string `form:"confirm_password" json:"confirm_password" xml:"confirm_password" binding:"required"`
 }
 
 // 重置密码接口
@@ -139,15 +124,7 @@ func ResetPasswordApi(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Successfully reset password!" })
 }
 
-type SignupParams struct {
-	UserName    string `form:"user_name" json:"user_name" binding:"required"`
-	RoleName    string `form:"role_name" json:"role_name"`
-	Email           string `form:"email" json:"email" xml:"email" binding:"required"`
-	Phone           string `form:"phone" json:"phone" xml:"phone"`
-	Password        string `form:"password" json:"password" xml:"password" binding:"required,min=6"`
-	ConfirmPassword string `form:"confirm_password" json:"confirm_password" xml:"confirm_password" binding:"required,min=6"`
-}
-
+// 用户注册接口
 func SignupApi(c *gin.Context) {
 	var params SignupParams
 	if err := c.ShouldBindJSON(&params); err != nil {

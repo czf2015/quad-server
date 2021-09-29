@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"os"
 	"time"
-	
+
 	"goserver/libs/conf"
 	"goserver/router"
 )
@@ -26,4 +26,3 @@ func main() {
 	}
 	server.ListenAndServe()
 }
-
