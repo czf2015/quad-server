@@ -8,7 +8,7 @@ type Service interface {
 	Name() string
 }
 
-type List map[string]Service
+type ServiceMap map[string]Service
 
 type Generator func() (Service, error)
 
@@ -23,35 +23,34 @@ func Register(k string, gen Generator) {
 	services[k] = gen
 }
 
-func GetServices() List {
+func GetServices() ServiceMap {
 	var (
-		l   = make(List)
+		serviceMap = make(ServiceMap)
 		err error
 	)
 	for k, gen := range services {
-		if l[k], err = gen(); err != nil {
+		if serviceMap[k], err = gen(); err != nil {
 			panic("service initialize fail")
 		}
 	}
-	return l
+	return serviceMap
 }
 
-
-func (g List) Get(k string) Service {
-	if v, ok := g[k]; ok {
+func (serviceMap ServiceMap) Get(k string) Service {
+	if v, ok := serviceMap[k]; ok {
 		return v
 	}
 	panic("service not found")
 }
 
-func (g List) GetOrNot(k string) (Service, bool) {
-	v, ok := g[k]
+func (serviceMap ServiceMap) GetOrNot(k string) (Service, bool) {
+	v, ok := serviceMap[k]
 	return v, ok
 }
 
-func (g List) Add(k string, service Service) {
-	if _, ok := g[k]; ok {
+func (serviceMap ServiceMap) Add(k string, service Service) {
+	if _, ok := serviceMap[k]; ok {
 		panic("service exist")
 	}
-	g[k] = service
+	serviceMap[k] = service
 }
