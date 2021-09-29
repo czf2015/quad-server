@@ -1,4 +1,4 @@
-package utils
+package file
 
 import (
 	"archive/zip"
@@ -10,19 +10,18 @@ import (
 	"goserver/libs/bytes"
 )
 
-func FileSize(s uint64) string {
+func SizeByte(s uint64) string {
 	sizes := []string{"B", "KB", "MB", "GB", "TB", "PB", "EB"}
 	return bytes.Format(s, 1024, sizes)
 }
 
-func FileExist(path string) bool {
+func IsExist(path string) bool {
 	_, err := os.Stat(path)
 	if err != nil {
 		return os.IsExist(err)
 	}
 	return true
 }
-
 
 func Download(url, output string) error {
 	req, err := http.NewRequest("GET", url, nil)
