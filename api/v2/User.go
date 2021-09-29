@@ -49,37 +49,34 @@ type SignupParams struct {
 // 登录接口
 func LoginApi(c *gin.Context) {
 	var params LoginParams
-	if err := c.ShouldBindJSON(&params); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	data := make(map[string]interface{})
-	code := e.ERROR_AUTH
-	auth := middlewares.CheckAuth(params.UserName, params.Password, params.CaptchaID, params.CaptchaCode)
-	if auth.Status == e.SUCCESS {
-		persistence := utils.GenerateUuid()
-		token, err := jwt.GenerateToken(auth.User.ID, auth.User.Name + " " + auth.User.RoleName, persistence)
-		if err != nil {
-			code = e.ERROR_AUTH_TOKEN
-		} else {
-			auth.User.LogUserPersistence(persistence)
-			data["token"] = token
-			code = e.SUCCESS
+	if middlewares.ParseParams(c, &params) {
+		data := make(map[string]interface{})
+		code := e.ERROR_AUTH
+		auth := middlewares.CheckAuth(params.UserName, params.Password, params.CaptchaID, params.CaptchaCode)
+		if auth.Status == e.SUCCESS {
+			persistence := utils.GenerateUuid()
+			token, err := jwt.GenerateToken(auth.User.ID, auth.User.Name + " " + auth.User.RoleName, persistence)
+			if err != nil {
+				code = e.ERROR_AUTH_TOKEN
+			} else {
+				auth.User.LogUserPersistence(persistence)
+				data["token"] = token
+				code = e.SUCCESS
+			}
+		} else if auth.Status == e.ERROR_AUTH_INACTIVE {
+			code = e.ERROR_AUTH_INACTIVE
 		}
-	} else if auth.Status == e.ERROR_AUTH_INACTIVE {
-		code = e.ERROR_AUTH_INACTIVE
+	
+		status := http.StatusBadRequest
+		if code == e.SUCCESS {
+			status = http.StatusOK
+		}
+		c.JSON(status, gin.H{
+			"code": code,
+			"msg":  e.GetMsg(code),
+			"data": data,
+		})
 	}
-
-	status := http.StatusBadRequest
-	if code == e.SUCCESS {
-		status = http.StatusOK
-	}
-	c.JSON(status, gin.H{
-		"code": code,
-		"msg":  e.GetMsg(code),
-		"data": data,
-	})
 }
 
 // 退出登录接口
@@ -91,67 +88,61 @@ func LogoutApi(c *gin.Context) {
 // 重置密码接口
 func ResetPasswordApi(c *gin.Context) {
 	var params ResetPasswordParams
-
-	if err := c.ShouldBindJSON(&params); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "Error: invalid data."})
-		return
+	if middlewares.ParseParams(c, &params) {
+		if params.ConfirmPassword != params.Password {
+			c.JSON(http.StatusBadRequest, gin.H{"message": "Error: unmatched password."})
+			return
+		}
+	
+		var user models.User
+		gorm.GetDB().Where(models.User{Name: params.UserName}).Where("deleted_at IS NULL").First(&user)
+		if len(user.ID) == 0 {
+			c.JSON(http.StatusBadRequest, gin.H{"message": "Error: invalid user."})
+			return
+		}
+	
+		var activation models.Activation
+		gorm.GetDB().Where(models.Activation{UserId: user.ID}).First(&activation)
+		if len(activation.ID) == 0 {
+			c.JSON(http.StatusBadRequest, gin.H{"message": "Error: invalid activation."})
+			return
+		}
+		if len(activation.CompletedAt) > 0 {
+			c.JSON(http.StatusBadRequest, gin.H{"message": "Error: You have reset your password."})
+			return
+		}
+	
+		gorm.GetDB().Exec("UPDATE user SET password=? WHERE id = ?", utils.EncryptPassword(params.Password), user.ID)
+		gorm.GetDB().Exec("UPDATE activation SET completed_at=? WHERE id = ?", time.Now().Format("2006-01-02 15:04:05"), activation.ID)
+		c.JSON(http.StatusOK, gin.H{"message": "Successfully reset password!" })
 	}
-	if params.ConfirmPassword != params.Password {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "Error: unmatched password."})
-		return
-	}
-
-	var user models.User
-	gorm.GetDB().Where(models.User{Name: params.UserName}).Where("deleted_at IS NULL").First(&user)
-	if len(user.ID) == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "Error: invalid user."})
-		return
-	}
-
-	var activation models.Activation
-	gorm.GetDB().Where(models.Activation{UserId: user.ID}).First(&activation)
-	if len(activation.ID) == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "Error: invalid activation."})
-		return
-	}
-	if len(activation.CompletedAt) > 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "Error: You have reset your password."})
-		return
-	}
-
-	gorm.GetDB().Exec("UPDATE user SET password=? WHERE id = ?", utils.EncryptPassword(params.Password), user.ID)
-	gorm.GetDB().Exec("UPDATE activation SET completed_at=? WHERE id = ?", time.Now().Format("2006-01-02 15:04:05"), activation.ID)
-	c.JSON(http.StatusOK, gin.H{"message": "Successfully reset password!" })
 }
 
 // 用户注册接口
 func SignupApi(c *gin.Context) {
 	var params SignupParams
-	if err := c.ShouldBindJSON(&params); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+	if middlewares.ParseParams(c, &params) {
+		if params.Password != params.ConfirmPassword {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Password not matched"})
+			return
+		}
+	
+		var user models.User
+		gorm.GetDB().Where(models.User{Email: params.Email}).Where("deleted_at IS NULL").First(&user)
+		if len(user.ID) > 0 {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Email already registered."})
+			return
+		}
+	
+		user = models.User{Base: models.Base{ID: utils.GenerateUuid()}, Name: params.UserName, RoleName: params.RoleName, Email: params.Email, Password: utils.EncryptPassword(params.Password)}
+		gorm.Create(&user)
+		activation := models.Activation{Base: models.Base{ID: utils.GenerateUuid()}, UserId: user.ID}
+		gorm.Create(&activation)
+	
+		c.JSON(http.StatusOK, gin.H{
+			"message": "You have signed up successfully. Please check you email for instructions to confirm your email address.",
+		})
+	
+		mail.SendWelcomeEmail(params.Email, user.MakeConfirmationLink(activation.ID))
 	}
-
-	if params.Password != params.ConfirmPassword {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Password not matched"})
-		return
-	}
-
-	var user models.User
-	gorm.GetDB().Where(models.User{Email: params.Email}).Where("deleted_at IS NULL").First(&user)
-	if len(user.ID) > 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Email already registered."})
-		return
-	}
-
-	user = models.User{Base: models.Base{ID: utils.GenerateUuid()}, Name: params.UserName, RoleName: params.RoleName, Email: params.Email, Password: utils.EncryptPassword(params.Password)}
-	gorm.Create(&user)
-	activation := models.Activation{Base: models.Base{ID: utils.GenerateUuid()}, UserId: user.ID}
-	gorm.Create(&activation)
-
-	c.JSON(http.StatusOK, gin.H{
-		"message": "You have signed up successfully. Please check you email for instructions to confirm your email address.",
-	})
-
-	mail.SendWelcomeEmail(params.Email, user.MakeConfirmationLink(activation.ID))
 }
