@@ -8,7 +8,13 @@ type Service interface {
 	Name() string
 }
 
+type List map[string]Service
+
 type Generator func() (Service, error)
+
+type Generators map[string]Generator
+
+var services = make(Generators)
 
 func Register(k string, gen Generator) {
 	if _, ok := services[k]; ok {
@@ -30,11 +36,6 @@ func GetServices() List {
 	return l
 }
 
-var services = make(Generators)
-
-type Generators map[string]Generator
-
-type List map[string]Service
 
 func (g List) Get(k string) Service {
 	if v, ok := g[k]; ok {
