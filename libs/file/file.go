@@ -10,7 +10,7 @@ import (
 	"goserver/libs/bytes"
 )
 
-func SizeByte(s uint64) string {
+func ByteSize(s uint64) string {
 	sizes := []string{"B", "KB", "MB", "GB", "TB", "PB", "EB"}
 	return bytes.Format(s, 1024, sizes)
 }
