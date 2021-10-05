@@ -33,4 +33,3 @@ func Format(v uint64, base float64, sizes []string) string {
 
 	return fmt.Sprintf(f+" %s", val, suffix)
 }
-

@@ -1,12 +1,12 @@
 package api_v1
 
 import (
-	"net/http"
 	"github.com/gin-gonic/gin"
+	"net/http"
 
+	"goserver/libs/gorm"
 	"goserver/libs/jwt"
 	"goserver/models"
-	"goserver/libs/gorm"
 )
 
 type SignedAgreementRequest struct {
@@ -37,7 +37,7 @@ func SignAgreementApi(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"user_id": user.ID,
+		"user_id":      user.ID,
 		"agreement_id": signedAgreement.Id,
 	})
 }

@@ -1,17 +1,17 @@
 package middlewares
 
 import (
+	"goserver/libs/captcha"
 	"goserver/libs/e"
 	"goserver/libs/gorm"
 	"goserver/libs/utils"
-	"goserver/libs/captcha"
 	models "goserver/models/v2"
 )
 
 type Auth struct {
-	User models.User
+	User       models.User
 	Activation models.Activation
-	Status int
+	Status     int
 }
 
 func CheckAuth(username, password, captchaID, captchaCode string) (auth Auth) {

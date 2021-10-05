@@ -10,6 +10,8 @@ import (
 	"goserver/libs/conf"
 )
 
+type DB = gorm.DB
+
 var db *gorm.DB
 
 // DSN格式：[username[:password]@][protocol[(address)]]/gormname[?param1=value1&...&paramN=valueN]
@@ -25,7 +27,7 @@ func getDSN() string {
 	loc := dbCfg.Key("LOC").String()
 	return fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=%s&parseTime=%s&loc=%s", user, password, host, dbName, charset, parseTime, loc)
 }
- 
+
 func configure(db *gorm.DB) {
 	db.SingularTable(true)
 	db.LogMode(true)
@@ -53,7 +55,7 @@ func CloseDB() {
 }
 
 // 执行sql原语
-func Exec(result interface {}, sql string, args...interface{}) *gorm.DB {
+func Exec(result interface{}, sql string, args ...interface{}) *gorm.DB {
 	return db.Raw(sql, args).Scan(result)
 }
 
@@ -99,15 +101,17 @@ func Cursor(result interface{}, limit, offset int) *gorm.DB {
 	return db.Order("create_time desc").Limit(limit).Offset(offset).Find(result)
 }
 
-// 更新 
+// 更新
 // 1. 保存模型变量值
 func Save(record interface{}) *gorm.DB {
 	return db.Save(record)
 }
+
 // 2. 更新单个字段值
 func Update(model interface{}, field string, value interface{}) *gorm.DB {
 	return db.Model(model).Update(field, value)
 }
+
 // 3. 更新多个字段值
 func Updates(model interface{}, updates interface{}) *gorm.DB {
 	return db.Model(model).Updates(updates)
@@ -119,4 +123,23 @@ func Delete(model interface{}, query interface{}, args ...interface{}) *gorm.DB 
 	return db.Where(query, args).Delete(model)
 }
 
+func Scopes(fn func(db *gorm.DB) *gorm.DB) *gorm.DB {
+	return db.Scopes(fn)
+}
 
+//分页封装
+func Paginate(page int, pageSize int) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		if page == 0 {
+			page = 1
+		}
+		switch {
+		case pageSize > 100:
+			pageSize = 100
+		case pageSize <= 0:
+			pageSize = 10
+		}
+		offset := (page - 1) * pageSize
+		return db.Offset(offset).Limit(pageSize)
+	}
+}

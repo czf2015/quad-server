@@ -10,20 +10,10 @@ import (
 	models "goserver/models/v2"
 )
 
-
 type AddressList []models.Address
 
 func GetAddressApi(c *gin.Context) {
-	var params models.Address
-	if middlewares.ParseParams(c, &params) {
-		var data models.Address
-		gorm.Where(&params).First(&data)
-		if len(data.ID) > 0 {
-			c.JSON(http.StatusOK, gin.H{"data": data})
-			return
-		}
-		c.JSON(http.StatusOK, gin.H{"message": "数据为空"})
-	}
+	middlewares.GetOne(c, &models.Address{}, &models.Address{})
 }
 
 func CreateAddressApi(c *gin.Context) {
@@ -34,11 +24,11 @@ func UpdateAddressApi(c *gin.Context) {
 	middlewares.UpdateOne(c, &models.Address{}, &models.Address{})
 }
 
-func DeleteAddressApi(c *gin.Context) {	
+func DeleteAddressApi(c *gin.Context) {
 	middlewares.DeleteOne(c, &models.Address{})
 }
 
-// 
+//
 func GetAllAddressApi(c *gin.Context) {
 	middlewares.GetAll(c, &AddressList{})
 }
@@ -69,6 +59,6 @@ func DeleteAddressListApi(c *gin.Context) {
 		for _, v := range params.IDs {
 			gorm.Delete(&models.Address{}, "id = ?", v)
 		}
-		c.JSON(http.StatusOK, gin.H{"message": "删除成功！"})	
+		c.JSON(http.StatusOK, gin.H{"message": "删除成功！"})
 	}
 }

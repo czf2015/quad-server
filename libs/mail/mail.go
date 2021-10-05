@@ -2,20 +2,20 @@ package mail
 
 import (
 	"encoding/base64"
-	"log"
-	"strings"
 	"io/ioutil"
+	"log"
 	"net/http"
+	"strings"
 
-	"google.golang.org/api/gmail/v1"
 	"golang.org/x/oauth2/google"
+	"google.golang.org/api/gmail/v1"
 
 	"goserver/libs/conf"
 	"goserver/libs/oauth2"
 )
 
 var (
-	adminEmail = conf.GetSectionKey("app", "ADMIN_EMAIL").String()
+	adminEmail   = conf.GetSectionKey("app", "ADMIN_EMAIL").String()
 	supportEmail = conf.GetSectionKey("app", "SUPPORT_EMAIL").String()
 )
 

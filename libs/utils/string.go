@@ -20,7 +20,6 @@ func ReplaceNth(s, old, new string, n int) string {
 	return s
 }
 
-
 func ReplaceAll(s string, oldnew ...string) string {
 	repl := strings.NewReplacer(oldnew...)
 	return repl.Replace(s)

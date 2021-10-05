@@ -2,8 +2,8 @@
 package conf
 
 import (
-	"log"
 	"github.com/go-ini/ini"
+	"log"
 )
 
 var (
@@ -18,7 +18,7 @@ func init() {
 	}
 }
 
-func GetSection(sectionName string)  (*ini.Section, error) {
+func GetSection(sectionName string) (*ini.Section, error) {
 	section, err := conf.GetSection(sectionName)
 	if err != nil {
 		log.Fatalf("Fail to get section '%v': %v", sectionName, err)

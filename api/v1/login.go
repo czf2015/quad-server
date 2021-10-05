@@ -6,12 +6,12 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"goserver/models"
 	"goserver/libs/e"
-	"goserver/libs/jwt"
 	"goserver/libs/gorm"
-	"goserver/libs/utils"
+	"goserver/libs/jwt"
 	"goserver/libs/mail"
+	"goserver/libs/utils"
+	"goserver/models"
 )
 
 const (
@@ -28,9 +28,9 @@ type SendPasswordResetJson struct {
 }
 
 type PasswordResetJson struct {
-	Email string `form:"email" json:"email" xml:"email" binding:"required,email"`
-	Code string `form:"code" json:"code" xml:"code" binding:"required"`
-	Password string `form:"password" json:"password" xml:"password" binding:"required"`
+	Email           string `form:"email" json:"email" xml:"email" binding:"required,email"`
+	Code            string `form:"code" json:"code" xml:"code" binding:"required"`
+	Password        string `form:"password" json:"password" xml:"password" binding:"required"`
 	ConfirmPassword string `form:"confirm_password" json:"confirm_password" xml:"confirm_password" binding:"required"`
 }
 
@@ -46,7 +46,7 @@ func LoginApi(c *gin.Context) {
 	auth := models.CheckAuth(json.Email, json.Password)
 	if auth.Status == e.SUCCESS {
 		persistence := utils.GenerateUuid()
-		token, err := jwt.GenerateToken(auth.User.ID, auth.User.FirstName + " " + auth.User.LastName, persistence)
+		token, err := jwt.GenerateToken(auth.User.ID, auth.User.FirstName+" "+auth.User.LastName, persistence)
 		if err != nil {
 			code = e.ERROR_AUTH_TOKEN
 		} else {
@@ -130,7 +130,7 @@ func ResetPasswordApi(c *gin.Context) {
 
 func ConfirmSignUpApi(c *gin.Context) {
 	email := c.Query("email")
-	code  := c.Query("code")
+	code := c.Query("code")
 	if len(email) == 0 || len(code) == 0 {
 		c.HTML(http.StatusOK, "redirect.tmpl", gin.H{"message": "Error.", "url": "/", "seconds": 3})
 		return

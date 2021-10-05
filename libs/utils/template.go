@@ -2,9 +2,9 @@ package utils
 
 import (
 	"bytes"
-	"strings"
 	"fmt"
 	"html/template"
+	"strings"
 	textTemplate "text/template"
 )
 

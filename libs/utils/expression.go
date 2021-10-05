@@ -1,7 +1,6 @@
 package utils
 
-import (
-)
+import ()
 
 func SetDefault(value, condition, def string) string {
 	if value == condition {

@@ -26,7 +26,7 @@ func Register(k string, gen Generator) {
 func GetServices() ServiceMap {
 	var (
 		serviceMap = make(ServiceMap)
-		err error
+		err        error
 	)
 	for k, gen := range services {
 		if serviceMap[k], err = gen(); err != nil {

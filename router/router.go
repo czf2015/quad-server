@@ -15,7 +15,7 @@ import (
 
 var Router *gin.Engine
 
-func init()  {
+func init() {
 	runMode := conf.GetSectionKey("base", "RUN_MODE").String()
 	gin.SetMode(runMode)
 
@@ -23,11 +23,11 @@ func init()  {
 
 	store := sessions.NewCookieStore([]byte("secret"))
 	Router.Use(sessions.Sessions("mysession", store))
-	
+
 	Router.Use(gin.Logger())
-	
+
 	Router.Use(gin.Recovery())
-	
+
 	Router.LoadHTMLGlob("templates/*")
 
 	Router.StaticFS("/static", http.Dir("./static"))
@@ -76,5 +76,15 @@ func init()  {
 		apiv2.PUT("/area-list", v2.UpdateAreaListApi)
 		apiv2.DELETE("/area", v2.DeleteAreaApi)
 		apiv2.DELETE("/area-list", v2.DeleteAreaListApi)
+		// addressPlan
+		apiv2.POST("/address-plan", v2.CreateAddressPlanApi)
+		apiv2.POST("/address-plan-list", v2.CreateAddressPlanListApi)
+		apiv2.GET("/address-plan", v2.GetAddressPlanApi)
+		apiv2.GET("/address-plan-all", v2.GetAllAddressPlanApi)
+		apiv2.GET("/address-plan-list", v2.GetAddressPlanListApi)
+		apiv2.PUT("/address-plan", v2.UpdateAddressPlanApi)
+		apiv2.PUT("/address-plan-list", v2.UpdateAddressPlanListApi)
+		apiv2.DELETE("/address-plan", v2.DeleteAddressPlanApi)
+		apiv2.DELETE("/address-plan-list", v2.DeleteAddressPlanListApi)
 	}
 }

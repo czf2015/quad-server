@@ -13,10 +13,10 @@ const (
 )
 
 var MsgFlags = map[int]string{
-	SUCCESS:                        "ok",
-	ERROR:                          "fail",
-	INVALID_PARAMS:                 "Invalid Params",
-	
+	SUCCESS:        "ok",
+	ERROR:          "fail",
+	INVALID_PARAMS: "Invalid Params",
+
 	ERROR_AUTH_CHECK_TOKEN_FAIL:    "Token Unauthorized",
 	ERROR_AUTH_CHECK_TOKEN_TIMEOUT: "Token Timeout",
 	ERROR_AUTH_TOKEN:               "Token Auth Error",

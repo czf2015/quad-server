@@ -5,10 +5,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"goserver/models"
 	"goserver/libs/gorm"
-	"goserver/libs/utils"
 	"goserver/libs/mail"
+	"goserver/libs/utils"
+	"goserver/models"
 )
 
 type Signature struct {

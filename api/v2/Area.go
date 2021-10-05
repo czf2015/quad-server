@@ -10,20 +10,10 @@ import (
 	models "goserver/models/v2"
 )
 
-
 type AreaList []models.Area
 
 func GetAreaApi(c *gin.Context) {
-	var params models.Area
-	if middlewares.ParseParams(c, &params) {
-		var data models.Area
-		gorm.Where(&params).First(&data)
-		if len(data.ID) > 0 {
-			c.JSON(http.StatusOK, gin.H{"data": data})
-			return
-		}
-		c.JSON(http.StatusOK, gin.H{"message": "数据为空"})
-	}
+	middlewares.GetOne(c, &models.Area{}, &models.Area{})
 }
 
 func CreateAreaApi(c *gin.Context) {
@@ -34,11 +24,11 @@ func UpdateAreaApi(c *gin.Context) {
 	middlewares.UpdateOne(c, &models.Area{}, &models.Area{})
 }
 
-func DeleteAreaApi(c *gin.Context) {	
+func DeleteAreaApi(c *gin.Context) {
 	middlewares.DeleteOne(c, &models.Area{})
 }
 
-// 
+//
 func GetAllAreaApi(c *gin.Context) {
 	middlewares.GetAll(c, &AreaList{})
 }
@@ -69,6 +59,6 @@ func DeleteAreaListApi(c *gin.Context) {
 		for _, v := range params.IDs {
 			gorm.Delete(&models.Area{}, "id = ?", v)
 		}
-		c.JSON(http.StatusOK, gin.H{"message": "删除成功！"})	
+		c.JSON(http.StatusOK, gin.H{"message": "删除成功！"})
 	}
 }

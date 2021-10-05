@@ -1,13 +1,13 @@
 package adbutler
 
 type Publisher struct {
-    Id int  `json:"id"`
-    Email string `json:"email"`
-    Name string `json:"name"`
+	Id    int    `json:"id"`
+	Email string `json:"email"`
+	Name  string `json:"name"`
 }
 
 type PublishersResponse struct {
-    Data []Publisher `json:"data"`
+	Data []Publisher `json:"data"`
 }
 
 func (publisher Publisher) GetZoneIds(zones []Zone) (zoneids []int) {

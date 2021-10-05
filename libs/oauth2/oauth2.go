@@ -4,11 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"os"
 	"net/http"
+	"os"
 
 	"golang.org/x/net/context"
-	"golang.org/x/oauth2"	
+	"golang.org/x/oauth2"
 )
 
 // Request a token from the web, then returns the retrieved token.

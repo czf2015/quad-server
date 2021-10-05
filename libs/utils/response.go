@@ -1,8 +1,8 @@
 package utils
 
 import (
-	"net/http"
 	"io/ioutil"
+	"net/http"
 )
 
 func GetResponseBody(res *http.Response) []byte {

@@ -2,8 +2,8 @@ package utils
 
 import (
 	"regexp"
-	"strings"
 	"strconv"
+	"strings"
 )
 
 func CompareVersion(src, toCompare string) bool {
@@ -44,24 +44,24 @@ func CompareVersion(src, toCompare string) bool {
 			return false
 		}
 		switch op {
-			case ">", ">=":
-				if v < vv {
-					return true
-				} else if v > vv {
-					return false
-				} else {
-					continue
-				}
-			case "<", "<=":
-				if v > vv {
-					return true
-				} else if v < vv {
-					return false
-				} else {
-					continue
-				}
+		case ">", ">=":
+			if v < vv {
+				return true
+			} else if v > vv {
+				return false
+			} else {
+				continue
+			}
+		case "<", "<=":
+			if v > vv {
+				return true
+			} else if v < vv {
+				return false
+			} else {
+				continue
 			}
 		}
+	}
 
 	return false
 }

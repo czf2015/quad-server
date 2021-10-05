@@ -20,6 +20,6 @@ func Copy(old interface{}) (new interface{}) {
 	if err != nil {
 		panic(err)
 	}
-	
+
 	return new
 }

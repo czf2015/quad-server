@@ -11,8 +11,8 @@ import (
 var jwtSecret = []byte(conf.GetSectionKey("app", "JWT_SECRET").String())
 
 type Claims struct {
-	Id string `json:"id"`
-	Name string `json:"name"`
+	Id          string `json:"id"`
+	Name        string `json:"name"`
 	Persistence string `json:"persistence"`
 	jwt.StandardClaims
 }

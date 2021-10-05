@@ -9,23 +9,23 @@ type ZoneDailyReportResponse struct {
 }
 
 type ZoneReport struct {
-	Id int `json:"id"`
-	Summary ZoneDailyReport `json:"summary"`
+	Id      int               `json:"id"`
+	Summary ZoneDailyReport   `json:"summary"`
 	Details []ZoneDailyReport `json:"details"`
 }
 
 type ZoneDailyReport struct {
-	StartDate time.Time `json:"start_date,string"`
-	Responses int `json:"responses"`
-	Impressions int `json:"impressions"`
-	Clicks int `json:"clicks"`
-	Conversions int `json:"conversions"`
-	Payout float64 `json:"payout"`
-	Blanks int `json:"blanks"`
-	Requests int `json:"requests"`
-	Cpm float64 `json:"e_cpm"`
-	Cpc float64 `json:"e_cpc"`
-	Cpa float64 `json:"e_cpa"`
+	StartDate   time.Time `json:"start_date,string"`
+	Responses   int       `json:"responses"`
+	Impressions int       `json:"impressions"`
+	Clicks      int       `json:"clicks"`
+	Conversions int       `json:"conversions"`
+	Payout      float64   `json:"payout"`
+	Blanks      int       `json:"blanks"`
+	Requests    int       `json:"requests"`
+	Cpm         float64   `json:"e_cpm"`
+	Cpc         float64   `json:"e_cpc"`
+	Cpa         float64   `json:"e_cpa"`
 }
 
 func (report *ZoneDailyReport) CalcPublisherRevShare(revShare float64) {
