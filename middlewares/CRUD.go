@@ -33,7 +33,7 @@ func GetList(c *gin.Context, model, data interface{}) {
 			page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 			pageSize, _ := strconv.Atoi(c.DefaultQuery("pageSize", "10"))
 			offset := (page - 1) * pageSize
-			if err := db.Order("id desc")/* .Where(model) */.Limit(pageSize).Offset(offset).Find(data).Error; err != nil {
+			if err := db.Order("id desc").Limit(pageSize).Offset(offset).Find(data).Error; err != nil {
 				c.JSON(http.StatusOK, gin.H{
 					"code":    500,
 					"message": "查询数据异常",
