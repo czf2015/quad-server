@@ -35,7 +35,7 @@ func GetAllAddressApi(c *gin.Context) {
 
 func CreateAddressListApi(c *gin.Context) {
 	var params AddressList
-	if middlewares.ParseParams(c, &params) {
+	if middlewares.BindJSON(c, &params) == nil {
 		for _, v := range params {
 			gorm.Create(&v)
 		}
@@ -45,7 +45,7 @@ func CreateAddressListApi(c *gin.Context) {
 
 func UpdateAddressListApi(c *gin.Context) {
 	var params AddressList
-	if middlewares.ParseParams(c, &params) {
+	if middlewares.BindJSON(c, &params) == nil {
 		for _, v := range params {
 			gorm.Updates(&models.Address{}, &v)
 		}
@@ -55,7 +55,7 @@ func UpdateAddressListApi(c *gin.Context) {
 
 func DeleteAddressListApi(c *gin.Context) {
 	var params middlewares.DeleteListParams
-	if middlewares.ParseParams(c, &params) {
+	if middlewares.BindJSON(c, &params) == nil {
 		for _, v := range params.IDs {
 			gorm.Delete(&models.Address{}, "id = ?", v)
 		}

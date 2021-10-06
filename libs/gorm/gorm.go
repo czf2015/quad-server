@@ -41,7 +41,7 @@ func init() {
 	dsn := getDSN()
 	db, err = gorm.Open(dbType, dsn)
 	if err != nil {
-		log.Println(err)
+		log.Fatalf("Open database fail: %v", err)
 	}
 	configure(db)
 }

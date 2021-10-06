@@ -2,13 +2,13 @@ package models_v2
 
 type AddressPlan struct {
 	Base
-	UserId                  string
-	NetworkAddress          string
+	UserId                  string `form:"userId"`
+	NetworkAddress          string `form:"networkAddress"`
 	BitWidth                int
 	SubnetAddressBeginValue int
 	PrefixBitWidth          int
-	Organization            string
+	Organization            string `form:"organization"`
 	AddressCount            int
-	SubnetType              string
+	SubnetType              string `form:"subnetType"`
 	AddressList             string
 }

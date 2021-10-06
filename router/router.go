@@ -82,6 +82,7 @@ func init() {
 		apiv2.GET("/address-plan", v2.GetAddressPlanApi)
 		apiv2.GET("/address-plan-all", v2.GetAllAddressPlanApi)
 		apiv2.GET("/address-plan-list", v2.GetAddressPlanListApi)
+		// apiv2.POST("/address-plan/query", v2.GetAddressPlanListApi)
 		apiv2.PUT("/address-plan", v2.UpdateAddressPlanApi)
 		apiv2.PUT("/address-plan-list", v2.UpdateAddressPlanListApi)
 		apiv2.DELETE("/address-plan", v2.DeleteAddressPlanApi)
