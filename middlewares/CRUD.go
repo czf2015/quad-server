@@ -9,18 +9,6 @@ import (
 	"goserver/libs/gorm"
 )
 
-func GetTotal(c *gin.Context, db *gorm.DB) (int, error) {
-	var total int
-	if err := db.Count(&total).Error; err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"code":    500,
-			"message": "查询数据异常",
-		})
-		return total, err
-	}
-	return total, nil
-}
-
 func GetAll(c *gin.Context, data interface{}) {
 	gorm.Find(data)
 	c.JSON(http.StatusOK, gin.H{"data": &data})
@@ -59,21 +47,14 @@ func GetList(c *gin.Context, model, data interface{}) {
 func GetOne(c *gin.Context, params, data interface{}) {
 	if BindJSON(c, params) == nil {
 		db := gorm.GetDB().Model(params).Where(params)
-
-		var total int
-		if err := db.Count(&total).Error; err != nil {
-			c.JSON(http.StatusOK, gin.H{
-				"code":    500,
-				"message": "查询数据异常",
-			})
-			return
+		if total, err := GetTotal(c, db); err == nil {
+			if total > 0 {
+				db.First(data)
+				c.JSON(http.StatusOK, gin.H{"data": data})
+				return
+			}
+			c.JSON(http.StatusOK, gin.H{"message": "数据为空"})
 		}
-		if total > 0 {
-			db.First(data)
-			c.JSON(http.StatusOK, gin.H{"data": data})
-			return
-		}
-		c.JSON(http.StatusOK, gin.H{"message": "数据为空"})
 	}
 }
 

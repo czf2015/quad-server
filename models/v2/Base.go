@@ -8,14 +8,16 @@ import (
 )
 
 type Base struct {
-	ID        string    `gorm:"primaryKey" json:"id" form:"id"`
+	ID        string    `gorm:"primaryKey;" json:"id" form:"id"`
 	CreatedAt time.Time `gorm:"default:NOW()" json:"-"`
 	UpdatedAt time.Time `gorm:"default:NOW()" json:"-"`
 	DeletedAt time.Time `gorm:"default:NULL" json:"-"`
 }
 
 func (base *Base) BeforeCreate(db *gorm.DB) (err error) {
-	base.ID = utils.GenerateUuid()
+	if len(base.ID) == 0 {
+    base.ID = utils.GenerateUuid()
+  }
 
 	return
 }

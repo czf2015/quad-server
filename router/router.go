@@ -11,6 +11,7 @@ import (
 
 	// v1 "goserver/api/v1"
 	v2 "goserver/api/v2"
+	"goserver/services/third"
 )
 
 var Router *gin.Engine
@@ -87,5 +88,7 @@ func init() {
 		apiv2.PUT("/address-plan-list", v2.UpdateAddressPlanListApi)
 		apiv2.DELETE("/address-plan", v2.DeleteAddressPlanApi)
 		apiv2.DELETE("/address-plan-list", v2.DeleteAddressPlanListApi)
+
+		apiv2.GET("/third", third.GetThirdService)
 	}
 }
