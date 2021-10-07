@@ -2,6 +2,7 @@ package models_v2
 
 type AddressPlan struct {
 	Base
+	Pid   string `json:"pid"`
 	UserId                  string `form:"userId"`
 	NetworkAddress          string `form:"networkAddress"`
 	BitWidth                int

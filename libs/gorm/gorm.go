@@ -12,6 +12,8 @@ import (
 
 type DB = gorm.DB
 
+type Model = gorm.Model
+
 var db *gorm.DB
 
 // DSN格式：[username[:password]@][protocol[(address)]]/gormname[?param1=value1&...&paramN=valueN]

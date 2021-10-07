@@ -3,8 +3,8 @@ package models_v2
 import (
 	"time"
 
-	"goserver/libs/gorm"
-	"goserver/libs/utils"
+	// "goserver/libs/gorm"
+	// "goserver/libs/utils"
 )
 
 type Base struct {
@@ -14,10 +14,10 @@ type Base struct {
 	DeletedAt time.Time `gorm:"default:NULL" json:"-"`
 }
 
-func (base *Base) BeforeCreate(db *gorm.DB) (err error) {
-	if len(base.ID) == 0 {
-    base.ID = utils.GenerateUuid()
-  }
+// func (base *Base) BeforeCreate(db *gorm.DB) (err error) {
+// 	if len(base.ID) == 0 {
+//     base.ID = utils.GenerateUuid()
+//   }
 
-	return
-}
+// 	return
+// }
