@@ -40,8 +40,8 @@ func BindJSON(c *gin.Context, params interface{}) error {
 	return nil
 }
 
-func GetTotal(c *gin.Context, db *gorm.DB) (int, error) {
-	var total int
+func GetTotal(c *gin.Context, db *gorm.DB) (int64, error) {
+	var total int64
 	if err := db.Count(&total).Error; err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code":    500,

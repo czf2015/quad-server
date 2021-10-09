@@ -3,9 +3,11 @@ package gorm
 import (
 	"fmt"
 	"log"
+	"database/sql"
 
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
+	"gorm.io/gorm"
+	"gorm.io/gorm/schema"
+	"gorm.io/driver/mysql"
 
 	"goserver/libs/conf"
 )
@@ -15,6 +17,7 @@ type DB = gorm.DB
 type Model = gorm.Model
 
 var db *gorm.DB
+var sqlDB *sql.DB
 
 // DSN格式：[username[:password]@][protocol[(address)]]/gormname[?param1=value1&...&paramN=valueN]
 func getDSN() string {
@@ -30,22 +33,27 @@ func getDSN() string {
 	return fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=%s&parseTime=%s&loc=%s", user, password, host, dbName, charset, parseTime, loc)
 }
 
-func configure(db *gorm.DB) {
-	db.SingularTable(true)
-	db.LogMode(true)
-	db.DB().SetMaxIdleConns(10)
-	db.DB().SetMaxOpenConns(100)
-}
 
 func init() {
 	var err error
-	dbType := conf.GetSectionKey("database", "TYPE").String()
+	
 	dsn := getDSN()
-	db, err = gorm.Open(dbType, dsn)
+	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{ 
+		NamingStrategy: schema.NamingStrategy{
+			// TablePrefix: "t_",   // 表名前缀，`User`表为`t_users`
+			SingularTable: true, // 使用单数表名，启用该选项后，`User` 表将是`user`
+			// NameReplacer: strings.NewReplacer("CID", "Cid"), // 在转为数据库名称之前，使用NameReplacer更改结构/字段名称。
+		},
+	})
 	if err != nil {
 		log.Fatalf("Open database fail: %v", err)
+		return
 	}
-	configure(db)
+
+	if sqlDB, err = db.DB(); err == nil {
+		sqlDB.SetMaxIdleConns(10)
+		sqlDB.SetMaxOpenConns(100)
+	}
 }
 
 func GetDB() *gorm.DB {
@@ -53,7 +61,7 @@ func GetDB() *gorm.DB {
 }
 
 func CloseDB() {
-	defer db.Close()
+	defer sqlDB.Close()
 }
 
 // 执行sql原语
@@ -95,8 +103,8 @@ func Select(model interface{}, statement string) *gorm.DB {
 	return db.Model(model).Select(statement)
 }
 
-func Count(model interface{}, total *int) *gorm.DB {
-	return db.Model(model).Count(&total)
+func Count(model interface{}, count *int64) *gorm.DB {
+	return db.Model(model).Count(count)
 }
 
 func Cursor(result interface{}, limit, offset int) *gorm.DB {
@@ -115,8 +123,8 @@ func Update(model interface{}, field string, value interface{}) *gorm.DB {
 }
 
 // 3. 更新多个字段值
-func Updates(model interface{}, updates interface{}) *gorm.DB {
-	return db.Model(model).Updates(updates)
+func Updates(updates interface{}) *gorm.DB {
+	return db.Model(updates).Updates(updates)
 }
 
 // 删除

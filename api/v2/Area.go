@@ -12,53 +12,44 @@ import (
 
 type AreaList []models.Area
 
+func GetAllAreaApi(c *gin.Context) {
+	middlewares.GetAll(c, &AreaList{})
+}
+
 func GetAreaApi(c *gin.Context) {
 	middlewares.GetOne(c, &models.Area{}, &models.Area{})
+}
+
+func GetAreaListApi(c *gin.Context) {
+	middlewares.GetList(c, &models.Area{}, &AreaList{})
 }
 
 func CreateAreaApi(c *gin.Context) {
 	middlewares.CreateOne(c, &models.Area{})
 }
 
-func UpdateAreaApi(c *gin.Context) {
-	middlewares.UpdateOne(c, &models.Area{}, &models.Area{})
-}
-
-func DeleteAreaApi(c *gin.Context) {
-	middlewares.DeleteOne(c, &models.Area{})
-}
-
-//
-func GetAllAreaApi(c *gin.Context) {
-	middlewares.GetAll(c, &AreaList{})
-}
-
 func CreateAreaListApi(c *gin.Context) {
-	var params AreaList
-	if middlewares.BindJSON(c, &params) == nil {
-		for _, v := range params {
-			gorm.Create(&v)
-		}
-		c.JSON(http.StatusOK, gin.H{"message": "创建成功！"})
-	}
+	middlewares.CreateList(c, &AreaList{})
+}
+
+func UpdateAreaApi(c *gin.Context) {
+	middlewares.UpdateOne(c, &models.Area{})
 }
 
 func UpdateAreaListApi(c *gin.Context) {
 	var params AreaList
 	if middlewares.BindJSON(c, &params) == nil {
 		for _, v := range params {
-			gorm.Updates(&models.Area{}, &v)
+			gorm.Updates(&v)
 		}
 		c.JSON(http.StatusOK, gin.H{"message": "更新成功！"})
 	}
 }
 
+func DeleteAreaApi(c *gin.Context) {
+	middlewares.DeleteOne(c, &models.Area{})
+}
+
 func DeleteAreaListApi(c *gin.Context) {
-	var params middlewares.DeleteListParams
-	if middlewares.BindJSON(c, &params) == nil {
-		for _, v := range params.IDs {
-			gorm.Delete(&models.Area{}, "id = ?", v)
-		}
-		c.JSON(http.StatusOK, gin.H{"message": "删除成功！"})
-	}
+	middlewares.DeleteList(c, &models.Area{})
 }

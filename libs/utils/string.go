@@ -24,3 +24,14 @@ func ReplaceAll(s string, oldnew ...string) string {
 	repl := strings.NewReplacer(oldnew...)
 	return repl.Replace(s)
 }
+
+func RemoveEmpty(str []string) []string {
+	i := 0
+	for _, s := range str {
+		if s != "" {
+			str[i] = s
+			i++
+		}
+	}
+	return str[:i]
+}
