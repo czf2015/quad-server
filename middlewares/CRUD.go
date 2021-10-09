@@ -79,13 +79,6 @@ func UpdateOne(c *gin.Context, params interface{}) {
 	}
 }
 
-// func UpdateList(c *gin.Context, model, params interface{}) {
-// 	if BindJSON(c, params) == nil {
-// 		gorm.Updates(params)
-// 		c.JSON(http.StatusOK, gin.H{"message": "更新成功！"})
-// 	}
-// }
-
 func DeleteOne(c *gin.Context, model interface{}) {
 	var params DeleteParams
 	if BindJSON(c, &params) == nil {
@@ -101,4 +94,3 @@ func DeleteList(c *gin.Context, model interface{}) {
 		c.JSON(http.StatusOK, gin.H{"message": "删除成功！"})
 	}
 }
-
