@@ -1,17 +1,13 @@
-npm run build
-cd goserver/
-go build -o revstream-server
-cd ..
+#!/bin/bash
 
-PROCESSES=`ps aux -P | grep nuxt | sed -e 's/ubuntu *//' | cut -d" " -f 1`
+source "$0/../env.sh"
+
+go build -o $PROJECT_NAME
+
+PROCESSES=`ps aux -P | grep "$PROJECT_NAME" | sed -e 's/ubuntu *//' | cut -d" " -f 1`
 for i in $PROCESSES;do
     kill $i
 done
-npm run start &
 
-PROCESSES=`ps aux -P | grep "revstream-server" | sed -e 's/ubuntu *//' | cut -d" " -f 1`
-for i in $PROCESSES;do
-    kill $i
-done
-cd ./goserver
-./revstream-server &
+cd $PROJECT_PATH
+./$PROJECT_NAME &
