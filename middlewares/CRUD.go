@@ -15,9 +15,9 @@ func GetAll(c *gin.Context, data interface{}) {
 }
 
 func GetOne(c *gin.Context, params, data interface{}) {
-	if BindJSON(c, params) == nil {
+	if BindJSON(c, params) {
 		db := gorm.GetDB().Model(params).Where(params)
-		if total, err := GetTotal(c, db); err == nil {
+		if total, ok := GetTotal(c, db); ok {
 			if total > 0 {
 				db.First(data)
 				c.JSON(http.StatusOK, gin.H{"data": data})
@@ -29,9 +29,9 @@ func GetOne(c *gin.Context, params, data interface{}) {
 }
 
 func GetList(c *gin.Context, model, data interface{}) {
-	if BindQuery(c, model) == nil {
+	if BindQuery(c, model) {
 		db := gorm.GetDB().Model(model).Where(model)
-		if total, err := GetTotal(c, db); err == nil {
+		if total, ok := GetTotal(c, db); ok {
 			page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 			pageSize, _ := strconv.Atoi(c.DefaultQuery("pageSize", "10"))
 			offset := (page - 1) * pageSize
@@ -59,21 +59,21 @@ func GetList(c *gin.Context, model, data interface{}) {
 }
 
 func CreateOne(c *gin.Context, params interface{}) {
-	if BindJSON(c, params) == nil {
+	if BindJSON(c, params) {
 		gorm.Create(params)
 		c.JSON(http.StatusOK, gin.H{"message": "创建成功！"})
 	}
 }
 
 func CreateList(c *gin.Context, params interface{}) {
-	if BindJSON(c, params) == nil {
+	if BindJSON(c, params) {
 		gorm.Create(params)
 		c.JSON(http.StatusOK, gin.H{"message": "创建成功！"})
 	}
 }
 
 func UpdateOne(c *gin.Context, params interface{}) {
-	if BindJSON(c, params) == nil {
+	if BindJSON(c, params) {
 		gorm.Updates(params)
 		c.JSON(http.StatusOK, gin.H{"message": "更新成功！"})
 	}
@@ -81,7 +81,7 @@ func UpdateOne(c *gin.Context, params interface{}) {
 
 func DeleteOne(c *gin.Context, model interface{}) {
 	var params DeleteParams
-	if BindJSON(c, &params) == nil {
+	if BindJSON(c, &params) {
 		gorm.Delete(model, params.ID)
 		c.JSON(http.StatusOK, gin.H{"message": "删除成功！"})
 	}
@@ -89,7 +89,7 @@ func DeleteOne(c *gin.Context, model interface{}) {
 
 func DeleteList(c *gin.Context, model interface{}) {
 	var params DeleteListParams
-	if BindJSON(c, &params) == nil {
+	if BindJSON(c, &params) {
 		gorm.Delete(model, params.IDs)
 		c.JSON(http.StatusOK, gin.H{"message": "删除成功！"})
 	}

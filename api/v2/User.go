@@ -49,7 +49,7 @@ type SignupParams struct {
 // 登录接口
 func LoginApi(c *gin.Context) {
 	var params LoginParams
-	if middlewares.BindJSON(c, &params) == nil {
+	if middlewares.BindJSON(c, &params) {
 		data := make(map[string]interface{})
 		code := e.ERROR_AUTH
 		auth := middlewares.CheckAuth(params.UserName, params.Password, params.CaptchaID, params.CaptchaCode)
@@ -88,7 +88,7 @@ func LogoutApi(c *gin.Context) {
 // 重置密码接口
 func ResetPasswordApi(c *gin.Context) {
 	var params ResetPasswordParams
-	if middlewares.BindJSON(c, &params) == nil {
+	if middlewares.BindJSON(c, &params) {
 		if params.ConfirmPassword != params.Password {
 			c.JSON(http.StatusBadRequest, gin.H{"message": "Error: unmatched password."})
 			return
@@ -121,7 +121,7 @@ func ResetPasswordApi(c *gin.Context) {
 // 用户注册接口
 func SignupApi(c *gin.Context) {
 	var params SignupParams
-	if middlewares.BindJSON(c, &params) == nil {
+	if middlewares.BindJSON(c, &params) {
 		if params.Password != params.ConfirmPassword {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Password not matched"})
 			return

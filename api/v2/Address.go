@@ -38,7 +38,7 @@ func UpdateAddressApi(c *gin.Context) {
 
 func UpdateAddressListApi(c *gin.Context) {
 	var params AddressList
-	if middlewares.BindJSON(c, &params) == nil {
+	if middlewares.BindJSON(c, &params) {
 		for _, v := range params {
 			gorm.Updates(&v)
 		}

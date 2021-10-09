@@ -16,38 +16,42 @@ type DeleteListParams struct {
 	IDs []string `json:"ids"`
 }
 
-func BindUri(c *gin.Context, params interface{}) error {
+func BindUri(c *gin.Context, params interface{}) bool {
+	ok := true
 	if err := c.ShouldBindUri(params); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return err
+		ok = false
 	}
-	return nil
+	return ok
 }
 
-func BindQuery(c *gin.Context, params interface{}) error {
+func BindQuery(c *gin.Context, params interface{}) bool {
+	ok := true
 	if err := c.ShouldBindQuery(params); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return err
+		ok = false
 	}
-	return nil
+	return ok
 }
 
-func BindJSON(c *gin.Context, params interface{}) error {
+func BindJSON(c *gin.Context, params interface{}) bool {
+	ok := true
 	if err := c.ShouldBindJSON(params); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return err
+		ok = false
 	}
-	return nil
+	return ok
 }
 
-func GetTotal(c *gin.Context, db *gorm.DB) (int64, error) {
+func GetTotal(c *gin.Context, db *gorm.DB) (int64, bool) {
 	var total int64
+	ok := true
 	if err := db.Count(&total).Error; err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code":    500,
 			"message": "查询数据异常",
 		})
-		return total, err
+		ok = false
 	}
-	return total, nil
+	return total, ok
 }

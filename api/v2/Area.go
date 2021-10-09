@@ -38,7 +38,7 @@ func UpdateAreaApi(c *gin.Context) {
 
 func UpdateAreaListApi(c *gin.Context) {
 	var params AreaList
-	if middlewares.BindJSON(c, &params) == nil {
+	if middlewares.BindJSON(c, &params) {
 		for _, v := range params {
 			gorm.Updates(&v)
 		}

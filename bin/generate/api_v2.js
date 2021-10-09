@@ -44,7 +44,7 @@ func Update${Model}Api(c *gin.Context) {
 
 func Update${Model}ListApi(c *gin.Context) {
 	var params ${Model}List
-	if middlewares.BindJSON(c, &params) == nil {
+	if middlewares.BindJSON(c, &params) {
 		for _, v := range params {
 			gorm.Updates(&v)
 		}
