@@ -83,11 +83,31 @@ func init() {
 		apiv2.GET("/address-plan", v2.GetAddressPlanApi)
 		apiv2.GET("/address-plan-all", v2.GetAllAddressPlanApi)
 		apiv2.GET("/address-plan-list", v2.GetAddressPlanListApi)
-		// apiv2.POST("/address-plan/query", v2.GetAddressPlanListApi)
 		apiv2.PUT("/address-plan", v2.UpdateAddressPlanApi)
 		apiv2.PUT("/address-plan-list", v2.UpdateAddressPlanListApi)
 		apiv2.DELETE("/address-plan", v2.DeleteAddressPlanApi)
 		apiv2.DELETE("/address-plan-list", v2.DeleteAddressPlanListApi)
+		// networkAllocation
+		apiv2.POST("/network-allocation", v2.CreateNetworkAllocationApi)
+		apiv2.POST("/network-allocation-list", v2.CreateNetworkAllocationListApi)
+		apiv2.GET("/network-allocation", v2.GetNetworkAllocationApi)
+		apiv2.GET("/network-allocation-all", v2.GetAllNetworkAllocationApi)
+		apiv2.GET("/network-allocation-list", v2.GetNetworkAllocationListApi)
+		apiv2.PUT("/network-allocation", v2.UpdateNetworkAllocationApi)
+		apiv2.PUT("/network-allocation-list", v2.UpdateNetworkAllocationListApi)
+		apiv2.DELETE("/network-allocation", v2.DeleteNetworkAllocationApi)
+		apiv2.DELETE("/network-allocation-list", v2.DeleteNetworkAllocationListApi)
+		// networkManage
+		apiv2.POST("/network-manage", v2.CreateNetworkManageApi)
+		apiv2.POST("/network-manage-list", v2.CreateNetworkManageListApi)
+		apiv2.GET("/network-manage", v2.GetNetworkManageApi)
+		apiv2.GET("/network-manage-all", v2.GetAllNetworkManageApi)
+		apiv2.GET("/network-manage-list", v2.GetNetworkManageListApi)
+		apiv2.PUT("/network-manage", v2.UpdateNetworkManageApi)
+		apiv2.PUT("/network-manage-list", v2.UpdateNetworkManageListApi)
+		apiv2.DELETE("/network-manage", v2.DeleteNetworkManageApi)
+		apiv2.DELETE("/network-manage-list", v2.DeleteNetworkManageListApi)
+
 
 		apiv2.GET("/third", third.GetThirdService)
 	}

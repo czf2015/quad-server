@@ -15,7 +15,7 @@ func GetAll(c *gin.Context, data interface{}) {
 }
 
 func GetOne(c *gin.Context, params, data interface{}) {
-	if BindJSON(c, params) {
+	if BindQuery(c, params) {
 		db := gorm.GetDB().Model(params).Where(params)
 		if total, ok := GetTotal(c, db); ok {
 			if total > 0 {
