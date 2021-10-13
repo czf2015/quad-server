@@ -9,7 +9,7 @@ import (
 	"gorm.io/gorm/schema"
 	"gorm.io/driver/mysql"
 
-	"goserver/libs/conf"
+	"goserver/libs/utils"
 )
 
 type DB = gorm.DB
@@ -19,26 +19,27 @@ type Model = gorm.Model
 var db *gorm.DB
 var sqlDB *sql.DB
 
-// DSN格式：[username[:password]@][protocol[(address)]]/gormname[?param1=value1&...&paramN=valueN]
-func getDSN() string {
-	dbCfg, _ := conf.GetSection("database")
-
-	dbName := dbCfg.Key("NAME").String()
-	user := dbCfg.Key("USER").String()
-	password := dbCfg.Key("PASSWORD").String()
-	host := dbCfg.Key("HOST").String()
-	charset := dbCfg.Key("CHARSET").String()
-	parseTime := dbCfg.Key("PARSE_TIME").String()
-	loc := dbCfg.Key("LOC").String()
-	return fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=%s&parseTime=%s&loc=%s", user, password, host, dbName, charset, parseTime, loc)
+type DSN struct {
+	Username string `yaml:"username"`
+	Password string `yaml:"password"`
+	Host string `yaml:"host"`
+	Name string `yaml:"dbName"`
+	Charset string `yaml:"charset"`
+	ParseTime string `yaml:"parseTime"`
+	Loc string `yaml:"loc"`
 }
 
+func (dsn DSN) String() string {
+	return fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=%s&parseTime=%s&loc=%s", dsn.Username, dsn.Password, dsn.Host, dsn.Name, dsn.Charset, dsn.ParseTime, dsn.Loc)
+}
 
 func init() {
-	var err error
-	
-	dsn := getDSN()
-	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{ 
+	var (
+		err error
+	  dsn DSN
+	)
+	utils.YAML.Unmarshal(utils.ReadFile("conf/database.yml"), &dsn)
+	db, err = gorm.Open(mysql.Open(dsn.String()), &gorm.Config{ 
 		NamingStrategy: schema.NamingStrategy{
 			// TablePrefix: "t_",   // 表名前缀，`User`表为`t_users`
 			SingularTable: true, // 使用单数表名，启用该选项后，`User` 表将是`user`

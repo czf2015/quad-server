@@ -110,5 +110,6 @@ func init() {
 
 
 		apiv2.GET("/third", third.GetThirdService)
+		apiv2.GET("/crawl", v2.Crawl)
 	}
 }
