@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"goserver/libs/conf"
+	_ "goserver/libs/certificate"
 	"goserver/router"
 )
 
@@ -24,5 +25,5 @@ func main() {
 		WriteTimeout:   writeTimeout,
 		MaxHeaderBytes: 1 << 20,
 	}
-	server.ListenAndServe()
+	server.ListenAndServeTLS("cert.pem", "key.pem")
 }
