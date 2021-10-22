@@ -25,5 +25,5 @@ func main() {
 		WriteTimeout:   writeTimeout,
 		MaxHeaderBytes: 1 << 20,
 	}
-	server.ListenAndServeTLS("cert.pem", "key.pem")
+	server.ListenAndServeTLS("conf/cert.pem", "conf/key.pem")
 }

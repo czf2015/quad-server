@@ -48,11 +48,11 @@ func (cert Cert) Generate() {
 	pk, _ := rsa.GenerateKey(rand.Reader, 2048)
 
 	derBytes, _ := x509.CreateCertificate(rand.Reader, &template, &template, &pk.PublicKey, pk)
-	certOut, _ := os.Create("cert.pem")
+	certOut, _ := os.Create("conf/cert.pem")
 	pem.Encode(certOut, &pem.Block{Type: "CERTIFICATE", Bytes: derBytes})
 	certOut.Close()
 
-	keyOut, _ := os.Create("key.pem")
+	keyOut, _ := os.Create("conf/key.pem")
 	pem.Encode(keyOut, &pem.Block{Type: "RSA PRIVATE KEY", Bytes: x509.MarshalPKCS1PrivateKey(pk)})
 	keyOut.Close()
 }
