@@ -12,5 +12,6 @@ CREATE TABLE `address_plan` (
   `prefix_bit_width` int(11) DEFAULT '40' COMMENT '前缀位数',
   `subnet_address_begin_value` int(11) DEFAULT '0' COMMENT '子网地址起始值',
   `address_count` int(11) DEFAULT '0' COMMENT '地址个数',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (user_id) REFERENCES user(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

@@ -10,5 +10,6 @@ CREATE TABLE `network_manage` (
   `usage` float DEFAULT '0' COMMENT '使用率',
   `distributed` float DEFAULT '0' COMMENT '分配率',
   `create_method` varchar(36) NOT NULL COMMENT '创建方式',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (user_id) REFERENCES user(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
