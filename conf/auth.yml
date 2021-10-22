@@ -8,8 +8,8 @@
 #   redirect_uris:
 #     - urn:ietf:wg:oauth:2.0:oob
 #     - http://localhost
-Organization:     
-  - "Manning Publications Co.",
-OrganizationalUnit: 
-  - "Books",
-CommonName: "Go Web Programming",
+Organization:    
+  - "Manning Publications Co."
+OrganizationalUnit:
+  - "Books"
+CommonName: "Go Web Programming"

@@ -21,7 +21,7 @@ type Cert struct {
 
 func init() {
 	var cert Cert
-	if _, err := utils.YAML.Unmarshal(utils.ReadFile("conf/auth.yml"), &Cert{}); err == nil {
+	if _, err := utils.YAML.Unmarshal(utils.ReadFile("conf/auth.yml"), &cert); err == nil {
 		cert.Generate()
 	}
 }
