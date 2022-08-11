@@ -1,6 +1,7 @@
 package middlewares
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -11,26 +12,27 @@ import (
 
 func GetAll(c *gin.Context, data interface{}) {
 	gorm.Find(data)
-	c.JSON(http.StatusOK, gin.H{"data": &data})
+	c.JSON(http.StatusOK, gin.H{"code": 200, "data": &data})
 }
 
-func GetOne(c *gin.Context, params, data interface{}) {
+func GetOne(c *gin.Context, params, data, model interface{}) {
 	if BindQuery(c, params) {
-		db := gorm.GetDB().Model(params).Where(params)
+		db := gorm.GetDB().Model(model).Where(params)
 		if total, ok := GetTotal(c, db); ok {
 			if total > 0 {
 				db.First(data)
-				c.JSON(http.StatusOK, gin.H{"data": data})
+				c.JSON(http.StatusOK, gin.H{"code": 200, "message": "创建成功！", "data": data})
 				return
 			}
-			c.JSON(http.StatusOK, gin.H{"message": "数据为空"})
+			c.JSON(http.StatusOK, gin.H{"code": 500, "message": "数据为空"})
 		}
 	}
 }
 
-func GetList(c *gin.Context, model, data interface{}) {
-	if BindQuery(c, model) {
-		db := gorm.GetDB().Model(model).Where(model)
+func GetList(c *gin.Context, params, data, model interface{}) {
+	if BindQuery(c, params) {
+		fmt.Println(params)
+		db := gorm.GetDB().Model(model).Where(params).Debug()
 		if total, ok := GetTotal(c, db); ok {
 			page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 			pageSize, _ := strconv.Atoi(c.DefaultQuery("pageSize", "10"))
@@ -42,7 +44,7 @@ func GetList(c *gin.Context, model, data interface{}) {
 				})
 				return
 			}
-	
+
 			c.JSON(http.StatusOK, gin.H{
 				"code":    200,
 				"message": "success",
@@ -54,43 +56,49 @@ func GetList(c *gin.Context, model, data interface{}) {
 				},
 			})
 			return
-		}		
+		}
 	}
 }
 
-func CreateOne(c *gin.Context, params interface{}) {
-	if BindJSON(c, params) {
-		gorm.Create(params)
-		c.JSON(http.StatusOK, gin.H{"message": "创建成功！"})
+func CreateOne(c *gin.Context, model interface{}) {
+	if BindJSON(c, model) {
+		if err := gorm.Create(model).Error; err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"code": 500, "message": "操作失败！", "err": err})
+		} else {
+			c.JSON(http.StatusOK, gin.H{"code": 200, "message": "操作成功！", "data": model})
+		}
 	}
 }
 
-func CreateList(c *gin.Context, params interface{}) {
+func CreateList(c *gin.Context, params, model interface{}) {
 	if BindJSON(c, params) {
-		gorm.Create(params)
-		c.JSON(http.StatusOK, gin.H{"message": "创建成功！"})
+		gorm.Create(model)
+		c.JSON(http.StatusOK, gin.H{"code": 200, "message": "创建成功！"})
 	}
 }
 
-func UpdateOne(c *gin.Context, params interface{}) {
-	if BindJSON(c, params) {
-		gorm.Updates(params)
-		c.JSON(http.StatusOK, gin.H{"message": "更新成功！"})
+func UpdateOne(c *gin.Context, model interface{}) {
+	if BindJSON(c, model) {
+		if err := gorm.Updates(model); err != nil {
+			c.JSON(http.StatusOK, gin.H{"code": 500, "message": "更新失败！", "err": err})
+		} else {
+			c.JSON(http.StatusOK, gin.H{"code": 200, "message": "更新成功！", "data": model})
+		}
 	}
 }
 
 func DeleteOne(c *gin.Context, model interface{}) {
 	var params DeleteParams
-	if BindJSON(c, &params) {
-		gorm.Delete(model, params.ID)
-		c.JSON(http.StatusOK, gin.H{"message": "删除成功！"})
+	if BindQuery(c, &params) {
+		gorm.DeleteByID(model, params.ID).Debug()
+		c.JSON(http.StatusOK, gin.H{"code": 200, "message": "删除成功！"})
 	}
 }
 
 func DeleteList(c *gin.Context, model interface{}) {
 	var params DeleteListParams
 	if BindJSON(c, &params) {
-		gorm.Delete(model, params.IDs)
-		c.JSON(http.StatusOK, gin.H{"message": "删除成功！"})
+		gorm.DeleteByID(model, params.IDs)
+		c.JSON(http.StatusOK, gin.H{"code": 200, "message": "删除成功！"})
 	}
 }

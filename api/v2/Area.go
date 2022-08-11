@@ -17,11 +17,11 @@ func GetAllAreaApi(c *gin.Context) {
 }
 
 func GetAreaApi(c *gin.Context) {
-	middlewares.GetOne(c, &models.Area{}, &models.Area{})
+	middlewares.GetOne(c, &models.Area{}, &models.Area{}, &models.Area{})
 }
 
 func GetAreaListApi(c *gin.Context) {
-	middlewares.GetList(c, &models.Area{}, &AreaList{})
+	middlewares.GetList(c, &models.Area{}, &AreaList{}, &models.Area{})
 }
 
 func CreateAreaApi(c *gin.Context) {
@@ -29,7 +29,7 @@ func CreateAreaApi(c *gin.Context) {
 }
 
 func CreateAreaListApi(c *gin.Context) {
-	middlewares.CreateList(c, &AreaList{})
+	middlewares.CreateList(c, &AreaList{}, &models.Area{})
 }
 
 func UpdateAreaApi(c *gin.Context) {

@@ -18,11 +18,11 @@ func GetAllNetworkAllocationApi(c *gin.Context) {
 }
 
 func GetNetworkAllocationApi(c *gin.Context) {
-	middlewares.GetOne(c, &models.NetworkAllocation{}, &models.NetworkAllocation{})
+	middlewares.GetOne(c, &models.NetworkAllocation{}, &models.NetworkAllocation{}, &models.NetworkAllocation{})
 }
 
 func GetNetworkAllocationListApi(c *gin.Context) {
-	middlewares.GetList(c, &models.NetworkAllocation{}, &NetworkAllocationList{})
+	middlewares.GetList(c, &models.NetworkAllocation{}, &NetworkAllocationList{}, &models.NetworkAllocation{})
 }
 
 func CreateNetworkAllocationApi(c *gin.Context) {
@@ -30,7 +30,7 @@ func CreateNetworkAllocationApi(c *gin.Context) {
 }
 
 func CreateNetworkAllocationListApi(c *gin.Context) {
-	middlewares.CreateList(c, &NetworkAllocationList{})
+	middlewares.CreateList(c, &NetworkAllocationList{}, &models.NetworkAllocation{})
 }
 
 func UpdateNetworkAllocationApi(c *gin.Context) {

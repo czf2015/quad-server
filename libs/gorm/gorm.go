@@ -1,13 +1,13 @@
 package gorm
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
-	"database/sql"
 
+	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
-	"gorm.io/driver/mysql"
 
 	"goserver/libs/utils"
 )
@@ -20,26 +20,34 @@ var db *gorm.DB
 var sqlDB *sql.DB
 
 type DSN struct {
-	Username string `yaml:"username"`
-	Password string `yaml:"password"`
-	Host string `yaml:"host"`
-	Name string `yaml:"dbName"`
-	Charset string `yaml:"charset"`
+	Username  string `yaml:"username"`
+	Password  string `yaml:"password"`
+	Host      string `yaml:"host"`
+	Name      string `yaml:"dbName"`
+	Charset   string `yaml:"charset"`
 	ParseTime string `yaml:"parseTime"`
-	Loc string `yaml:"loc"`
+	Loc       string `yaml:"loc"`
+	// host     string `yaml:"host"`
+	// port     int    `yaml:"port"`
+	// user     string `yaml:"user"`
+	// password string `yaml:"password"`
+	// dbname   string `yaml:"dbname"`
+	// sslmode  string `yaml:"sslmode"`
+	// TimeZone string `yaml:"TimeZone"`
 }
 
 func (dsn DSN) String() string {
 	return fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=%s&parseTime=%s&loc=%s", dsn.Username, dsn.Password, dsn.Host, dsn.Name, dsn.Charset, dsn.ParseTime, dsn.Loc)
+	// return fmt.Sprintf("host=%s  port=%s user=%s password=%s dbname=%s sslmode=%s TimeZone=%s", dsn.host, dsn.port, dsn.user, dsn.password, dsn.dbname, dsn.sslmode, dsn.TimeZone)
 }
 
 func init() {
 	var (
 		err error
-	  dsn DSN
+		dsn DSN
 	)
 	utils.YAML.Unmarshal(utils.ReadFile("conf/database.yml"), &dsn)
-	db, err = gorm.Open(mysql.Open(dsn.String()), &gorm.Config{ 
+	db, err = gorm.Open(mysql.Open(dsn.String()), &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
 			// TablePrefix: "t_",   // 表名前缀，`User`表为`t_users`
 			SingularTable: true, // 使用单数表名，启用该选项后，`User` 表将是`user`
@@ -68,6 +76,10 @@ func CloseDB() {
 // 执行sql原语
 func Exec(result interface{}, sql string, args ...interface{}) *gorm.DB {
 	return db.Raw(sql, args).Scan(result)
+}
+
+func AutoMigrat(record interface{}) {
+	db.AutoMigrate(record)
 }
 
 // 插入
@@ -132,6 +144,10 @@ func Updates(updates interface{}) *gorm.DB {
 // 1. 用法：db.Where(条件表达式).Delete(空模型变量指针)
 func Delete(model interface{}, query interface{}, args ...interface{}) *gorm.DB {
 	return db.Where(query, args).Delete(model)
+}
+
+func DeleteByID(model interface{}, args ...interface{}) *gorm.DB {
+	return db.Delete(model, args)
 }
 
 func Scopes(fn func(db *gorm.DB) *gorm.DB) *gorm.DB {

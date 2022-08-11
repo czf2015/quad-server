@@ -14,18 +14,20 @@ require (
 	github.com/gopherjs/gopherjs v0.0.0-20181103185306-d547d1d9531e // indirect
 	github.com/gorilla/sessions v1.2.0 // indirect
 	github.com/jtolds/gls v4.2.1+incompatible // indirect
+	github.com/mattn/go-colorable v0.1.6 // indirect
 	github.com/mojocn/base64Captcha v1.3.5
 	github.com/smartystreets/assertions v0.0.0-20190116191733-b6c0e53d7304 // indirect
 	github.com/smartystreets/goconvey v0.0.0-20181108003508-044398e4856c // indirect
-	github.com/stretchr/testify v1.6.1
+	github.com/stretchr/testify v1.7.0
 	github.com/thoas/go-funk v0.6.0
+	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
 	golang.org/x/net v0.0.0-20210503060351-7fd8e65b6420
 	golang.org/x/oauth2 v0.0.0-20210819190943-2bc19b11175f
-	golang.org/x/text v0.3.6
+	golang.org/x/text v0.3.7
 	google.golang.org/api v0.57.0
 	gopkg.in/ini.v1 v1.63.2 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
 	gopkg.in/yaml.v2 v2.2.8
-	gorm.io/driver/mysql v1.1.2
-	gorm.io/gorm v1.21.15
+	gorm.io/driver/mysql v1.3.5
+	gorm.io/gorm v1.23.8
 )

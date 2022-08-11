@@ -6,8 +6,8 @@ import (
 	"os"
 	"time"
 
-	"goserver/libs/conf"
 	_ "goserver/libs/certificate"
+	"goserver/libs/conf"
 	"goserver/router"
 )
 

@@ -107,7 +107,12 @@ func init() {
 		apiv2.PUT("/network-manage-list", v2.UpdateNetworkManageListApi)
 		apiv2.DELETE("/network-manage", v2.DeleteNetworkManageApi)
 		apiv2.DELETE("/network-manage-list", v2.DeleteNetworkManageListApi)
-
+		// page
+		apiv2.GET("/page/list", v2.GetPageListApi)
+		apiv2.GET("/page", v2.GetPageApi)
+		apiv2.POST("/page", v2.CreatePageApi)
+		apiv2.PUT("/page", v2.UpdatePageApi)
+		apiv2.DELETE("/page", v2.DeletePageApi)
 
 		apiv2.GET("/third", third.GetThirdService)
 		apiv2.GET("/crawl", v2.Crawl)

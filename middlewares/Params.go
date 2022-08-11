@@ -9,7 +9,7 @@ import (
 )
 
 type DeleteParams struct {
-	ID string `json:"id"`
+	ID string `json:"id" form:"id"`
 }
 
 type DeleteListParams struct {

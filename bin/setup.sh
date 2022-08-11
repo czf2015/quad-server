@@ -13,10 +13,10 @@ apt install -y mysql-server
 
 echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc
 if [ -z `which go` ]; then
-    wget https://dl.google.com/go/go1.13.linux-amd64.tar.gz
-    tar -C /usr/local -xzf go1.13.linux-amd64.tar.gz
+    wget https://dl.google.com/go/go1.16.5.linux-amd64.tar.gz
+    tar -C /usr/local -xzf go1.16.5.linux-amd64.tar.gz
     export PATH=$PATH:/usr/local/go/bin
-    rm go1.13.linux-amd64.tar.gz
+    rm go1.16.5.linux-amd64.tar.gz
 fi
 
 # go get -u github.com/go-sql-driver/mysql

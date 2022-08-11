@@ -17,11 +17,11 @@ func GetAllAddressPlanApi(c *gin.Context) {
 }
 
 func GetAddressPlanApi(c *gin.Context) {
-	middlewares.GetOne(c, &models.AddressPlan{}, &models.AddressPlan{})
+	middlewares.GetOne(c, &models.AddressPlan{}, &models.AddressPlan{}, &models.AddressPlan{})
 }
 
 func GetAddressPlanListApi(c *gin.Context) {
-	middlewares.GetList(c, &models.AddressPlan{}, &AddressPlanList{})
+	middlewares.GetList(c, &models.AddressPlan{}, &AddressPlanList{}, &models.AddressPlan{})
 }
 
 func CreateAddressPlanApi(c *gin.Context) {
@@ -29,7 +29,7 @@ func CreateAddressPlanApi(c *gin.Context) {
 }
 
 func CreateAddressPlanListApi(c *gin.Context) {
-	middlewares.CreateList(c, &AddressPlanList{})
+	middlewares.CreateList(c, &AddressPlanList{}, &models.AddressPlan{})
 }
 
 func UpdateAddressPlanApi(c *gin.Context) {

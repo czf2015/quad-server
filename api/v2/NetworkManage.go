@@ -18,11 +18,11 @@ func GetAllNetworkManageApi(c *gin.Context) {
 }
 
 func GetNetworkManageApi(c *gin.Context) {
-	middlewares.GetOne(c, &models.NetworkManage{}, &models.NetworkManage{})
+	middlewares.GetOne(c, &models.NetworkManage{}, &models.NetworkManage{}, &models.NetworkManage{})
 }
 
 func GetNetworkManageListApi(c *gin.Context) {
-	middlewares.GetList(c, &models.NetworkManage{}, &NetworkManageList{})
+	middlewares.GetList(c, &models.NetworkManage{}, &NetworkManageList{}, &models.NetworkManage{})
 }
 
 func CreateNetworkManageApi(c *gin.Context) {
@@ -30,7 +30,7 @@ func CreateNetworkManageApi(c *gin.Context) {
 }
 
 func CreateNetworkManageListApi(c *gin.Context) {
-	middlewares.CreateList(c, &NetworkManageList{})
+	middlewares.CreateList(c, &NetworkManageList{}, &models.NetworkManage{})
 }
 
 func UpdateNetworkManageApi(c *gin.Context) {
