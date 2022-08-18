@@ -70,6 +70,7 @@ func CreateOne(c *gin.Context, model interface{}) {
 	}
 }
 
+// TOFIX:
 func CreateList(c *gin.Context, params, model interface{}) {
 	if BindJSON(c, params) {
 		gorm.Create(model)
@@ -79,7 +80,7 @@ func CreateList(c *gin.Context, params, model interface{}) {
 
 func UpdateOne(c *gin.Context, model interface{}) {
 	if BindJSON(c, model) {
-		if err := gorm.Updates(model); err != nil {
+		if err := gorm.Updates(model, c.PostForm("id")).Error; err != nil {
 			c.JSON(http.StatusOK, gin.H{"code": 500, "message": "更新失败！", "err": err})
 		} else {
 			c.JSON(http.StatusOK, gin.H{"code": 200, "message": "更新成功！", "data": model})
@@ -88,17 +89,17 @@ func UpdateOne(c *gin.Context, model interface{}) {
 }
 
 func DeleteOne(c *gin.Context, model interface{}) {
-	var params DeleteParams
-	if BindQuery(c, &params) {
-		gorm.DeleteByID(model, params.ID).Debug()
-		c.JSON(http.StatusOK, gin.H{"code": 200, "message": "删除成功！"})
-	}
+	// var params DeleteParams
+	// if BindQuery(c, &params) {
+	gorm.DeleteByID(model, c.Query("id")).Debug()
+	c.JSON(http.StatusOK, gin.H{"code": 200, "message": "删除成功！"})
+	// }
 }
 
 func DeleteList(c *gin.Context, model interface{}) {
-	var params DeleteListParams
-	if BindJSON(c, &params) {
-		gorm.DeleteByID(model, params.IDs)
-		c.JSON(http.StatusOK, gin.H{"code": 200, "message": "删除成功！"})
-	}
+	// var params DeleteListParams
+	// if BindJSON(c, &params) {
+	gorm.DeleteByID(model, c.Query("ids"))
+	c.JSON(http.StatusOK, gin.H{"code": 200, "message": "删除成功！"})
+	// }
 }

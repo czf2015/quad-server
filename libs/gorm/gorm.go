@@ -136,8 +136,8 @@ func Update(model interface{}, field string, value interface{}) *gorm.DB {
 }
 
 // 3. 更新多个字段值
-func Updates(updates interface{}) *gorm.DB {
-	return db.Model(updates).Updates(updates)
+func Updates(updates, arg interface{}) *gorm.DB {
+	return db.Model(updates).Where(arg).Updates(updates)
 }
 
 // 删除
