@@ -54,8 +54,3 @@ func DeletePageApi(c *gin.Context) {
 	middlewares.DeleteOne(c, &models.Page{})
 }
 
-// 页面发布
-type PublishPageParams struct {
-	ID      string `json:"id"`
-	Version string `json:"version"` // 发布的版本可回退，生成版本备份
-}

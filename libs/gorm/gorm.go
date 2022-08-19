@@ -84,7 +84,7 @@ func AutoMigrat(record interface{}) {
 
 // 插入
 func Create(record interface{}) *gorm.DB {
-	return db.Create(record)
+	return db.Create(record).Debug()
 }
 
 // 查询
@@ -93,7 +93,7 @@ func Take(result interface{}) *gorm.DB {
 }
 
 func First(result interface{}) *gorm.DB {
-	return db.First(result)
+	return db.Debug().First(result)
 }
 
 func Last(result interface{}) *gorm.DB {

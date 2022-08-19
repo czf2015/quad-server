@@ -113,6 +113,12 @@ func init() {
 		apiv2.POST("/page", v2.CreatePageApi)
 		apiv2.PUT("/page", v2.UpdatePageApi)
 		apiv2.DELETE("/page", v2.DeletePageApi)
+		// publish
+		apiv2.GET("/page/publish/list", v2.GetPublishListApi)
+		apiv2.GET("/page/publish", v2.GetPublishApi)
+		apiv2.POST("/page/publish", v2.CreatePublishApi)
+		apiv2.PUT("/page/publish", v2.UpdatePublishApi)
+		apiv2.DELETE("/page/publish", v2.DeletePageApi)
 
 		apiv2.GET("/third", third.GetThirdService)
 		apiv2.GET("/crawl", v2.Crawl)
