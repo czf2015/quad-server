@@ -43,7 +43,7 @@ type GetPublishResponse struct {
 }
 
 func GetPublishApi(c *gin.Context) {
-	middlewares.GetOne(c, &GetPublishResponse{}, &models.Publish{}, &GetPublishParams{})
+	middlewares.GetOne(c, &GetPublishParams{}, &GetPublishResponse{}, &models.Publish{})
 }
 
 // 版本发布
@@ -66,9 +66,9 @@ func CreatePublishApi(c *gin.Context) {
 	page.DeletedAt = nil
 	model := models.Publish{Page: page, Version: params.Version, Remark: params.Remark}
 	if err := gorm.Create(&model).Debug().Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"code": 500, "message": "操作失败！", "err": err})
+		c.JSON(http.StatusBadRequest, gin.H{"code": 500, "message": "发布失败！", "err": err})
 	} else {
-		c.JSON(http.StatusOK, gin.H{"code": 200, "message": "操作成功！", "data": model})
+		c.JSON(http.StatusOK, gin.H{"code": 200, "message": "发布成功！"})
 	}
 }
 

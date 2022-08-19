@@ -21,7 +21,7 @@ func GetOne(c *gin.Context, params, data, model interface{}) {
 		if total, ok := GetTotal(c, db); ok {
 			if total > 0 {
 				db.First(data)
-				c.JSON(http.StatusOK, gin.H{"code": 200, "message": "创建成功！", "data": data})
+				c.JSON(http.StatusOK, gin.H{"code": 200, "message": "查询成功！", "data": data})
 				return
 			}
 			c.JSON(http.StatusOK, gin.H{"code": 500, "message": "数据为空"})
@@ -63,9 +63,9 @@ func GetList(c *gin.Context, params, data, model interface{}) {
 func CreateOne(c *gin.Context, model interface{}) {
 	if BindJSON(c, model) {
 		if err := gorm.Create(model).Error; err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"code": 500, "message": "操作失败！", "err": err})
+			c.JSON(http.StatusBadRequest, gin.H{"code": 500, "message": "创建失败！", "err": err})
 		} else {
-			c.JSON(http.StatusOK, gin.H{"code": 200, "message": "操作成功！", "data": model})
+			c.JSON(http.StatusOK, gin.H{"code": 200, "message": "创建成功！", "data": model})
 		}
 	}
 }
