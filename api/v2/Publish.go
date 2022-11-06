@@ -34,7 +34,7 @@ func GetPublishListApi(c *gin.Context) {
 
 // 查询版本参数
 type GetPublishParams struct {
-	ID string `form:"id"`
+	Path string `form:"path"`
 }
 
 // 查询版本返回
@@ -56,14 +56,14 @@ type PublishPublishParams struct {
 
 // 新增版本
 func CreatePublishApi(c *gin.Context) {
-	params := PublishPublishParams{}
+	var params PublishPublishParams
 	middlewares.BindJSON(c, &params)
 	page := models.Page{Base: models.Base{ID: params.ID}}
 	gorm.First(&page)
 	page.ID = ""
-	page.CreatedAt = nil
-	page.UpdatedAt = nil
-	page.DeletedAt = nil
+	page.CreateTime = nil
+	page.UpdateTime = nil
+	page.DeleteTime = nil
 	model := models.Publish{Page: page, Version: params.Version, Remark: params.Remark}
 	if err := gorm.Create(&model).Debug().Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"code": 500, "message": "发布失败！", "err": err})

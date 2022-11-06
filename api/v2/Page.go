@@ -1,6 +1,8 @@
 package api_v2
 
 import (
+	"time"
+
 	"github.com/gin-gonic/gin"
 
 	"goserver/middlewares"
@@ -9,17 +11,19 @@ import (
 
 // 查询列表参数
 type GetPageListParams struct {
-	Title string           `form:"title"`
-	Path  string           `form:"path"`
-	Tags  models.FlatArray `gorm:"TYPE:json" form:"tags"`
+	Title string   `form:"title"`
+	Path  string   `form:"path"`
+	Tags  []string `form:"tags"`
 }
 
 // 查询列表返回
 type GetPageListResponse []struct {
-	ID    string           `json:"id"`
-	Title string           `json:"title"`
-	Path  string           `json:"path"`
-	Tags  models.FlatArray `gorm:"TYPE:json" json:"tags"`
+	ID         string           `json:"id"`
+	Title      string           `json:"title"`
+	Path       string           `json:"path"`
+	Tags       models.FlatArray `gorm:"TYPE:json" json:"tags"`
+	CreateTime *time.Time       `gorm:"type:timestamp;default:NOW()" json:"create_time"`
+	UpdateTime *time.Time       `gorm:"type:timestamp;default:NOW()" json:"update_time"`
 }
 
 func GetPageListApi(c *gin.Context) {
@@ -53,4 +57,3 @@ func UpdatePageApi(c *gin.Context) {
 func DeletePageApi(c *gin.Context) {
 	middlewares.DeleteOne(c, &models.Page{})
 }
-

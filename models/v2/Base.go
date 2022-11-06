@@ -11,10 +11,10 @@ import (
 )
 
 type Base struct {
-	ID        string     `gorm:"primaryKey;" json:"id"`
-	CreatedAt *time.Time `gorm:"type:timestamp;default:NOW()" json:"created_at"`
-	UpdatedAt *time.Time `gorm:"type:timestamp;default:NOW()" json:"updated_at"`
-	DeletedAt *time.Time `gorm:"type:timestamp;default:NULL" json:"-"`
+	ID         string     `gorm:"primaryKey;" json:"id"`
+	CreateTime *time.Time `gorm:"type:timestamp;default:NOW()" json:"create_time"`
+	UpdateTime *time.Time `gorm:"type:timestamp;default:NOW()" json:"update_time"`
+	DeleteTime *time.Time `gorm:"type:timestamp;default:NULL" json:"-"`
 }
 
 func (base *Base) BeforeCreate(db *gorm.DB) (err error) {
