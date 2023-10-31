@@ -24,7 +24,7 @@ func GetOne(c *gin.Context, params, data, model interface{}) {
 				c.JSON(http.StatusOK, gin.H{"code": 200, "message": "查询成功！", "data": data})
 				return
 			}
-			c.JSON(http.StatusOK, gin.H{"code": 500, "message": "数据为空"})
+			c.JSON(http.StatusOK, gin.H{"code": 500, "message": "查询不到！"})
 		}
 	}
 }
@@ -34,10 +34,10 @@ func GetList(c *gin.Context, params, data, model interface{}) {
 		fmt.Println(params)
 		db := gorm.GetDB().Model(model).Where(params).Debug()
 		if total, ok := GetTotal(c, db); ok {
-			page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
-			pageSize, _ := strconv.Atoi(c.DefaultQuery("pageSize", "10"))
-			offset := (page - 1) * pageSize
-			if err := db.Order("id desc").Limit(pageSize).Offset(offset).Find(data).Error; err != nil {
+			offset, _ := strconv.Atoi(c.DefaultQuery("offset", "0"))
+			limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
+			order := c.DefaultQuery("order", "desc")
+			if err := db.Order("update_time " + order).Limit(limit).Offset(offset).Find(data).Error; err != nil {
 				c.JSON(http.StatusOK, gin.H{
 					"code":    500,
 					"message": "查询数据异常",
@@ -51,11 +51,8 @@ func GetList(c *gin.Context, params, data, model interface{}) {
 				"data": map[string]interface{}{
 					"list":     data,
 					"total":    total,
-					"page":     page,
-					"pageSize": pageSize,
 				},
 			})
-			return
 		}
 	}
 }
@@ -82,24 +79,34 @@ func UpdateOne(c *gin.Context, model interface{}) {
 	if BindJSON(c, model) {
 		if err := gorm.Updates(model, c.PostForm("id")).Error; err != nil {
 			c.JSON(http.StatusOK, gin.H{"code": 500, "message": "更新失败！", "err": err})
-		} else {
-			c.JSON(http.StatusOK, gin.H{"code": 200, "message": "更新成功！", "data": model})
+			return
 		}
+		c.JSON(http.StatusOK, gin.H{"code": 200, "message": "更新成功！", "data": model})
 	}
 }
 
 func DeleteOne(c *gin.Context, model interface{}) {
-	// var params DeleteParams
-	// if BindQuery(c, &params) {
 	gorm.DeleteByID(model, c.Query("id")).Debug()
 	c.JSON(http.StatusOK, gin.H{"code": 200, "message": "删除成功！"})
-	// }
 }
 
 func DeleteList(c *gin.Context, model interface{}) {
-	// var params DeleteListParams
-	// if BindJSON(c, &params) {
-	gorm.DeleteByID(model, c.Query("ids"))
-	c.JSON(http.StatusOK, gin.H{"code": 200, "message": "删除成功！"})
-	// }
+	var params DeleteListParams
+	if err := c.ShouldBindJSON(&params); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"code": 400, "message": "参数错误！", "err": err})
+		return
+	}
+
+	// 在数据库中删除符合条件的记录
+	result := gorm.Delete(model, "id in ?", params.IDs)
+	if result.Error != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"code": 500, "message": "删除失败！", "error": result.Error.Error()})
+			return
+	}
+
+	// 返回成功响应
+	c.JSON(http.StatusOK, gin.H{
+			"message": "删除成功！",
+			"code": 200,
+	})
 }

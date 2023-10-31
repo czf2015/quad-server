@@ -11,6 +11,7 @@ import (
 
 	// v1 "goserver/api/v1"
 	v2 "goserver/api/v2"
+	v3 "goserver/api/v3"
 	"goserver/services/third"
 )
 
@@ -107,20 +108,41 @@ func init() {
 		// apiv2.PUT("/network-manage-list", v2.UpdateNetworkManageListApi)
 		// apiv2.DELETE("/network-manage", v2.DeleteNetworkManageApi)
 		// apiv2.DELETE("/network-manage-list", v2.DeleteNetworkManageListApi)
-		// page
-		apiv2.GET("/page/list", v2.GetPageListApi)
-		apiv2.GET("/page", v2.GetPageApi)
-		apiv2.POST("/page", v2.CreatePageApi)
-		apiv2.PUT("/page", v2.UpdatePageApi)
-		apiv2.DELETE("/page", v2.DeletePageApi)
-		// publish
-		apiv2.GET("/page/publish/list", v2.GetPublishListApi)
-		apiv2.GET("/page/publish", v2.GetPublishApi)
-		apiv2.POST("/page/publish", v2.CreatePublishApi)
-		apiv2.PUT("/page/publish", v2.UpdatePublishApi)
-		apiv2.DELETE("/page/publish", v2.DeletePageApi)
+		// // page
+		// apiv2.GET("/page/list", v2.GetPageListApi)
+		// apiv2.GET("/page", v2.GetPageApi)
+		// apiv2.POST("/page", v2.CreatePageApi)
+		// apiv2.PUT("/page", v2.UpdatePageApi)
+		// apiv2.DELETE("/page", v2.DeletePageApi)
+		// // publish
+		// apiv2.GET("/page/publish/list", v2.GetPublishListApi)
+		// apiv2.GET("/page/publish", v2.GetPublishApi)
+		// apiv2.POST("/page/publish", v2.CreatePublishApi)
+		// apiv2.PUT("/page/publish", v2.UpdatePublishApi)
+		// apiv2.DELETE("/page/publish", v2.DeletePageApi)
 
 		apiv2.GET("/third", third.GetThirdService)
 		apiv2.GET("/crawl", v2.Crawl)
+	}
+
+	apiv3 := Router.Group("/api/v3")
+	{
+		// page
+		apiv3.GET("/page/list", v3.GetPageListApi)
+		apiv3.GET("/page", v3.GetPageApi)
+		apiv3.POST("/page", v3.CreatePageApi)
+		apiv3.PUT("/page", v3.UpdatePageApi)
+		apiv3.DELETE("/page", v3.DeletePageApi)
+		apiv3.DELETE("/page/list", v3.DeletePageListApi)
+		// publish
+		apiv3.GET("/publish/list", v3.GetPublishListApi)
+		apiv3.GET("/publish", v3.GetPublishApi)
+		apiv3.POST("/publish", v3.CreatePublishApi)
+		apiv3.PUT("/publish", v3.UpdatePublishApi)
+		apiv3.PATCH("/publish", v3.PatchPublishApi)
+		apiv3.DELETE("/publish", v3.DeletePublishApi)
+		apiv3.DELETE("/publish/list", v3.DeletePublishListApi)
+		// upload
+		apiv3.POST("/upload", v3.UploadFile)
 	}
 }

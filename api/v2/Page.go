@@ -13,7 +13,7 @@ import (
 type GetPageListParams struct {
 	Title string   `form:"title"`
 	Path  string   `form:"path"`
-	Tags  []string `form:"tags"`
+	// Tags  []string `form:"tags"`
 }
 
 // 查询列表返回
