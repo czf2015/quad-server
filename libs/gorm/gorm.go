@@ -27,7 +27,7 @@ type DSN struct {
 	Charset   string `yaml:"charset"`
 	ParseTime string `yaml:"parseTime"`
 	Loc       string `yaml:"loc"`
-	Port     string    `yaml:"port"`
+	Port      string `yaml:"port"`
 }
 
 func (dsn DSN) String() string {
@@ -40,7 +40,7 @@ func init() {
 		dsn DSN
 	)
 	utils.YAML.Unmarshal(utils.ReadFile("conf/database.yml"), &dsn)
-	fmt.Println("dsn.String()",dsn.String())
+	fmt.Println("dsn.String()", dsn.String())
 	db, err = gorm.Open(mysql.Open(dsn.String()), &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
 
@@ -70,7 +70,7 @@ func CloseDB() {
 
 // 执行sql原语
 func Exec(result interface{}, sql string, args ...interface{}) *gorm.DB {
-	return db.Raw(sql, args).Scan(result)
+	return db.Raw(sql, args...).Scan(result)
 }
 
 func AutoMigrat(record interface{}) {
@@ -104,7 +104,7 @@ func Pluck(model interface{}, field string, results *[]interface{}) *gorm.DB {
 }
 
 func Where(query interface{}, args ...interface{}) *gorm.DB {
-	return db.Where(query, args)
+	return db.Where(query, args...)
 }
 
 func Select(model interface{}, statement string) *gorm.DB {
@@ -138,7 +138,7 @@ func Updates(updates, arg interface{}) *gorm.DB {
 // 删除
 // 1. 用法：db.Where(条件表达式).Delete(空模型变量指针)
 func Delete(model interface{}, query interface{}, args ...interface{}) *gorm.DB {
-	return db.Where(query, args).Delete(model)
+	return db.Where(query, args...).Delete(model)
 }
 
 func DeleteByID(model interface{}, args ...interface{}) *gorm.DB {
@@ -149,7 +149,7 @@ func Scopes(fn func(db *gorm.DB) *gorm.DB) *gorm.DB {
 	return db.Scopes(fn)
 }
 
-//分页封装
+// 分页封装
 func Paginate(page int, pageSize int) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		if page == 0 {

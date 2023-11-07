@@ -3,9 +3,10 @@ package models_v3
 import (
 	"database/sql/driver"
 	"encoding/json"
-	"goserver/libs/gorm"
 	"goserver/libs/utils"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 type Base struct {

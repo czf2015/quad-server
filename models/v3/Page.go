@@ -1,8 +1,9 @@
 package models_v3
 
 import (
-	"goserver/libs/gorm"
 	"time"
+
+	"goserver/libs/orm"
 )
 
 // 页面日志
@@ -49,5 +50,5 @@ type Page struct {
 }
 
 func init() {
-	gorm.AutoMigrat(&Page{})
+	orm.GetDB().AutoMigrate(&Page{})
 }

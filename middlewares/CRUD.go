@@ -7,17 +7,17 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"goserver/libs/gorm"
+	"goserver/libs/orm"
 )
 
 func GetAll(c *gin.Context, data interface{}) {
-	gorm.Find(data)
+	orm.GetDB().Find(data)
 	c.JSON(http.StatusOK, gin.H{"code": 200, "data": &data})
 }
 
 func GetOne(c *gin.Context, params, data, model interface{}) {
 	if BindQuery(c, params) {
-		db := gorm.GetDB().Model(model).Where(params)
+		db := orm.GetDB().Model(model).Where(params)
 		if total, ok := GetTotal(c, db); ok {
 			if total > 0 {
 				db.First(data)
@@ -32,7 +32,7 @@ func GetOne(c *gin.Context, params, data, model interface{}) {
 func GetList(c *gin.Context, params, data, model interface{}) {
 	if BindQuery(c, params) {
 		fmt.Println(params)
-		db := gorm.GetDB().Model(model).Where(params).Debug()
+		db := orm.GetDB().Model(model).Where(params)
 		if total, ok := GetTotal(c, db); ok {
 			offset, _ := strconv.Atoi(c.DefaultQuery("offset", "0"))
 			limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
@@ -49,8 +49,8 @@ func GetList(c *gin.Context, params, data, model interface{}) {
 				"code":    200,
 				"message": "success",
 				"data": map[string]interface{}{
-					"list":     data,
-					"total":    total,
+					"list":  data,
+					"total": total,
 				},
 			})
 		}
@@ -59,7 +59,7 @@ func GetList(c *gin.Context, params, data, model interface{}) {
 
 func CreateOne(c *gin.Context, model interface{}) {
 	if BindJSON(c, model) {
-		if err := gorm.Create(model).Error; err != nil {
+		if err := orm.GetDB().Create(model).Error; err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"code": 500, "message": "创建失败！", "err": err})
 		} else {
 			c.JSON(http.StatusOK, gin.H{"code": 200, "message": "创建成功！", "data": model})
@@ -70,14 +70,14 @@ func CreateOne(c *gin.Context, model interface{}) {
 // TOFIX:
 func CreateList(c *gin.Context, params, model interface{}) {
 	if BindJSON(c, params) {
-		gorm.Create(model)
+		orm.GetDB().Create(model)
 		c.JSON(http.StatusOK, gin.H{"code": 200, "message": "创建成功！"})
 	}
 }
 
 func UpdateOne(c *gin.Context, model interface{}) {
 	if BindJSON(c, model) {
-		if err := gorm.Updates(model, c.PostForm("id")).Error; err != nil {
+		if err := orm.GetDB().Model(model).Where(c.PostForm("id")).Updates(model).Error; err != nil {
 			c.JSON(http.StatusOK, gin.H{"code": 500, "message": "更新失败！", "err": err})
 			return
 		}
@@ -86,7 +86,7 @@ func UpdateOne(c *gin.Context, model interface{}) {
 }
 
 func DeleteOne(c *gin.Context, model interface{}) {
-	gorm.DeleteByID(model, c.Query("id")).Debug()
+	orm.GetDB().Delete(model, c.Query("id"))
 	c.JSON(http.StatusOK, gin.H{"code": 200, "message": "删除成功！"})
 }
 
@@ -97,16 +97,15 @@ func DeleteList(c *gin.Context, model interface{}) {
 		return
 	}
 
-	// 在数据库中删除符合条件的记录
-	result := gorm.Delete(model, "id in ?", params.IDs)
+	result := orm.GetDB().Delete(model, params.IDs)
 	if result.Error != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"code": 500, "message": "删除失败！", "error": result.Error.Error()})
-			return
+		c.JSON(http.StatusInternalServerError, gin.H{"code": 500, "message": "删除失败！", "error": result.Error.Error()})
+		return
 	}
 
 	// 返回成功响应
 	c.JSON(http.StatusOK, gin.H{
-			"message": "删除成功！",
-			"code": 200,
+		"message": "删除成功！",
+		"code":    200,
 	})
 }

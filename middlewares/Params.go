@@ -5,7 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"goserver/libs/gorm"
+	"gorm.io/gorm"
 )
 
 type DeleteParams struct {
@@ -54,4 +54,21 @@ func GetTotal(c *gin.Context, db *gorm.DB) (int64, bool) {
 		ok = false
 	}
 	return total, ok
+}
+
+// 分页封装
+func Paginate(page int, pageSize int) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		if page == 0 {
+			page = 1
+		}
+		switch {
+		case pageSize > 100:
+			pageSize = 100
+		case pageSize <= 0:
+			pageSize = 10
+		}
+		offset := (page - 1) * pageSize
+		return db.Offset(offset).Limit(pageSize)
+	}
 }

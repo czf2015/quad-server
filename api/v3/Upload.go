@@ -1,8 +1,10 @@
 package api_v3
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -38,6 +40,9 @@ func UploadFile(c *gin.Context) {
 	// 将文件保存到指定路径
 	now := time.Now()
 	filename := now.Format("2006-01-02 15:04:05") + "_" + file.Filename
+	filename = strings.Replace(filename, " ", "_", -1)
+	filename = strings.Replace(filename, ":", "-", -1)
+	fmt.Println(filename)
 	err = c.SaveUploadedFile(file, "static/uploads/"+filename)
 	if err != nil {
 		log.Println(err)

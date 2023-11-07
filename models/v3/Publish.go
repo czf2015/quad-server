@@ -1,6 +1,8 @@
 package models_v3
 
-import "goserver/libs/gorm"
+import (
+	"goserver/libs/orm"
+)
 
 type Publish struct {
 	Page
@@ -10,5 +12,5 @@ type Publish struct {
 }
 
 func init() {
-	gorm.AutoMigrat(&Publish{})
+	orm.GetDB().AutoMigrate(&Publish{})
 }

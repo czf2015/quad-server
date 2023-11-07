@@ -6,7 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"goserver/libs/gorm"
+	"goserver/libs/orm"
 	"goserver/middlewares"
 	models "goserver/models/v3"
 )
@@ -63,14 +63,14 @@ func CreatePublishApi(c *gin.Context) {
 	var params CreatePublishParams
 	middlewares.BindJSON(c, &params)
 	page := models.Page{Base: models.Base{ID: params.ID}}
-	gorm.First(&page)
+	orm.GetDB().First(&page)
 	page.ID = ""
 	page.CreateTime = nil
 	page.UpdateTime = nil
 	page.DeleteTime = nil
 	page.Path = params.Path
 	model := models.Publish{Page: page, Version: params.Version, Remark: params.Remark}
-	if err := gorm.Create(&model).Debug().Error; err != nil {
+	if err := orm.GetDB().Create(&model).Debug().Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"code": 500, "message": "发布失败！", "err": err})
 		return
 	}
@@ -99,7 +99,7 @@ func PatchPublishApi(c *gin.Context) {
 	var params PatchPublishParams
 	var data PatchPublishResponse
 	if middlewares.BindJSON(c, &params) {
-		db := gorm.GetDB().Model(&models.Publish{}).Where("id = ?", params.ID)
+		db := orm.GetDB().Model(&models.Publish{}).Where("id = ?", params.ID)
 		if total, ok := middlewares.GetTotal(c, db); ok {
 			if total > 0 {
 				if err := db.Update("Online", params.Online).Error; err != nil {
