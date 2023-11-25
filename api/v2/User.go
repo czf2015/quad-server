@@ -8,7 +8,6 @@ import (
 
 	"goserver/libs/e"
 	"goserver/libs/gorm"
-	"goserver/libs/jwt"
 	"goserver/libs/mail"
 	"goserver/libs/utils"
 	"goserver/middlewares"
@@ -55,14 +54,14 @@ func LoginApi(c *gin.Context) {
 		auth := middlewares.CheckAuth(params.UserName, params.Password, params.CaptchaID, params.CaptchaCode)
 		if auth.Status == e.SUCCESS {
 			persistence := utils.GenerateUuid()
-			token, err := jwt.GenerateToken(auth.User.ID, auth.User.Name+" "+auth.User.RoleName, persistence)
-			if err != nil {
-				code = e.ERROR_AUTH_TOKEN
-			} else {
-				auth.User.LogUserPersistence(persistence)
-				data["token"] = token
-				code = e.SUCCESS
-			}
+			//token, err := jwt.GenerateToken(auth.User.ID, auth.User.Name+" "+auth.User.RoleName, persistence)
+			// if err != nil {
+			code = e.ERROR_AUTH_TOKEN
+			// } else {
+			auth.User.LogUserPersistence(persistence)
+			// data["token"] = token
+			code = e.SUCCESS
+			// }
 		} else if auth.Status == e.ERROR_AUTH_INACTIVE {
 			code = e.ERROR_AUTH_INACTIVE
 		}

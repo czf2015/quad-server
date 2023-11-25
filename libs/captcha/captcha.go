@@ -16,6 +16,6 @@ func Generate() (id, b64s string, err error) {
 	return captcha.Generate()
 }
 
-func Verify(id, answer string, clear bool) bool {
-	return captcha.Verify(id, answer, clear)
+func Verify(id, code string, caseSensitive bool) bool {
+	return captcha.Verify(id, code, caseSensitive)
 }

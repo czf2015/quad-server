@@ -12,7 +12,9 @@ import (
 	"goserver/libs/utils"
 )
 
-var db *gorm.DB
+type DB = *gorm.DB
+
+var db DB
 var sqlDB *sql.DB
 
 type DSN struct {

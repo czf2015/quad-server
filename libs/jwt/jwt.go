@@ -27,7 +27,7 @@ func GenerateToken(id, name, persistence string) (string, error) {
 		persistence,
 		jwt.StandardClaims{
 			ExpiresAt: expireTime.Unix(),
-			Issuer:    "gin-rs",
+			Issuer:    "lcdp",
 		},
 	}
 
@@ -46,6 +46,26 @@ func RefreshToken(claims Claims) string {
 		}
 	}
 	return ""
+}
+
+func ExpireToken(claims Claims) string {
+	expiresAt := time.Now().Add(-1 * time.Second).Unix()
+	expiredClaims := Claims{
+		claims.Id,
+		claims.Name,
+		claims.Persistence,
+		jwt.StandardClaims{
+			ExpiresAt: expiresAt,
+			Issuer:    "lcdp",
+		},
+	}
+
+	tokenClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, expiredClaims)
+	if token, err := tokenClaims.SignedString(jwtSecret); err != nil {
+		return ""
+	} else {
+		return token
+	}
 }
 
 func ParseToken(token string) (*Claims, error) {

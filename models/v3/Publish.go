@@ -1,16 +1,8 @@
 package models_v3
 
-import (
-	"goserver/libs/orm"
-)
-
 type Publish struct {
 	Page
-	Version string `json:"version"`
-	Remark  string `json:"remark"`
+	Version string `gorm:"type:varchar(255);not null" json:"version"`
+	Remark  string `gorm:"type:varchar(255)" json:"remark"`
 	Online  int    `gorm:"default:0" json:"online"`
-}
-
-func init() {
-	orm.GetDB().AutoMigrate(&Publish{})
 }

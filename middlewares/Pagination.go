@@ -14,7 +14,7 @@ type Pagination struct {
 func GetPagination(c *gin.Context) (Pagination, error) {
 	var params Pagination
 	if err := c.ShouldBindJSON(&params); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"err": err.Error()})
 		return params, err
 	}
 	return params, nil

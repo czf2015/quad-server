@@ -11,8 +11,8 @@ import (
 
 // 查询列表参数
 type GetPageListParams struct {
-	Title string   `form:"title"`
-	Path  string   `form:"path"`
+	Title string `form:"title"`
+	Path  string `form:"path"`
 	// Tags  []string `form:"tags"`
 }
 

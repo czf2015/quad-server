@@ -3,25 +3,14 @@ package models_v3
 import (
 	"database/sql/driver"
 	"encoding/json"
-	"goserver/libs/utils"
 	"time"
-
-	"gorm.io/gorm"
 )
 
 type Base struct {
-	ID         string     `gorm:"primaryKey" json:"id"`
-	CreateTime *time.Time `gorm:"type:timestamp;default:NOW();autoCreateTime" json:"create_time"`
-	UpdateTime *time.Time `gorm:"type:timestamp;default:NOW();autoUpdateTime" json:"update_time"`
-	DeleteTime *time.Time `gorm:"type:timestamp;default:NULL" json:"-"`
-}
-
-func (base *Base) BeforeCreate(db *gorm.DB) (err error) {
-	if len(base.ID) == 0 {
-		base.ID = utils.GenerateUuid()
-	}
-
-	return
+	ID        uint       `gorm:"primaryKey;autoIncrement" form:"id" json:"id"`
+	CreatedAt *time.Time `gorm:"type:timestamp;default:NOW();autoCreateTime" json:"create_time"`
+	UpdatedAt *time.Time `gorm:"type:timestamp;default:NOW();autoUpdateTime" json:"update_time"`
+	DeletedAt *time.Time `gorm:"type:timestamp;default:NULL" json:"-"`
 }
 
 type FlatMap map[string]interface{}

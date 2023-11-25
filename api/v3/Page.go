@@ -18,12 +18,13 @@ type GetPageListParams struct {
 
 // 查询列表返回
 type GetPageListResponse []struct {
-	ID         string           `json:"id"`
-	Title      string           `json:"title"`
-	Path       string           `json:"path"`
-	Tags       models.FlatArray `gorm:"TYPE:json" json:"tags"`
-	CreateTime *time.Time       `gorm:"type:timestamp;default:NOW()" json:"create_time"`
-	UpdateTime *time.Time       `gorm:"type:timestamp;default:NOW()" json:"update_time"`
+	ID        uint             `json:"id"`
+	Title     string           `json:"title"`
+	Path      string           `json:"path"`
+	Tags      models.FlatArray `gorm:"TYPE:json" json:"tags"`
+	CreatedAt *time.Time       `gorm:"type:timestamp;default:NOW()" json:"create_time"`
+	ImgUrl    string           `gorm:"type:varchar(255);not null;column:img_url" json:"imgUrl"`
+	UpdatedAt *time.Time       `gorm:"type:timestamp;default:NOW()" json:"update_time"`
 }
 
 func GetPageListApi(c *gin.Context) {
@@ -32,7 +33,7 @@ func GetPageListApi(c *gin.Context) {
 
 // 查询页面参数
 type GetPageParams struct {
-	ID string `form:"id"`
+	ID uint `form:"id"`
 }
 
 // 查询页面返回

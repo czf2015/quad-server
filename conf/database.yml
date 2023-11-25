@@ -8,8 +8,10 @@ parseTime: "True"
 loc: Local
 
 # type: postgresql
-# host: 172.16.0.39 # localhost
-port: 13306 #5432
+host: localhost
+# host: 172.16.0.39 
+# port: 5432
+port: 13306 
 # user: postgres
 # password: wlza2021
 # dbname: quad

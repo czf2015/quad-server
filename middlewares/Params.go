@@ -8,18 +8,10 @@ import (
 	"gorm.io/gorm"
 )
 
-type DeleteParams struct {
-	ID string `json:"id" form:"id"`
-}
-
-type DeleteListParams struct {
-	IDs []string `json:"ids"`
-}
-
 func BindUri(c *gin.Context, params interface{}) bool {
 	ok := true
 	if err := c.ShouldBindUri(params); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"err": err.Error()})
 		ok = false
 	}
 	return ok
@@ -28,7 +20,7 @@ func BindUri(c *gin.Context, params interface{}) bool {
 func BindQuery(c *gin.Context, params interface{}) bool {
 	ok := true
 	if err := c.ShouldBindQuery(params); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"err": err.Error()})
 		ok = false
 	}
 	return ok
@@ -37,7 +29,7 @@ func BindQuery(c *gin.Context, params interface{}) bool {
 func BindJSON(c *gin.Context, params interface{}) bool {
 	ok := true
 	if err := c.ShouldBindJSON(params); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"err": err.Error()})
 		ok = false
 	}
 	return ok

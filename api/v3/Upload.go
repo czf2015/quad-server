@@ -2,7 +2,7 @@ package api_v3
 
 import (
 	"fmt"
-	"log"
+	"goserver/libs/e"
 	"net/http"
 	"strings"
 	"time"
@@ -11,10 +11,14 @@ import (
 )
 
 func UploadFile(c *gin.Context) {
+	code := e.SUCCESS
 	file, err := c.FormFile("file")
 	if err != nil {
+		code = e.ERROR_FORM_FILE
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
+			"code":    code,
+			"message": e.GetMsg(code),
+			"err":     err.Error(),
 		})
 		return
 	}
@@ -22,8 +26,11 @@ func UploadFile(c *gin.Context) {
 	// 可选：限制文件类型
 	allowedExtensions := []string{".jpg", ".jpeg", ".bmp", ".gif", ".tiff", ".png", ".svg"}
 	if !isAllowedExtension(file.Filename, allowedExtensions) {
+		code = e.ERROR_FILE_TYPE
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Invalid file type",
+			"code":    code,
+			"message": e.GetMsg(code),
+			"err":     "Invalid file type",
 		})
 		return
 	}
@@ -31,8 +38,11 @@ func UploadFile(c *gin.Context) {
 	// 可选：限制文件大小
 	maxFileSize := int64(8 << 20) // 8MB
 	if file.Size > maxFileSize {
+		code = e.ERROR_FILE_SIZE
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "File size exceeds the limit",
+			"code":    code,
+			"message": e.GetMsg(code),
+			"err":     "File size exceeds the limit",
 		})
 		return
 	}
@@ -45,9 +55,11 @@ func UploadFile(c *gin.Context) {
 	fmt.Println(filename)
 	err = c.SaveUploadedFile(file, "static/uploads/"+filename)
 	if err != nil {
-		log.Println(err)
+		code = e.ERROR_FILE_SAVE
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Failed to save file",
+			"code":    code,
+			"message": e.GetMsg(code),
+			"err":     "Failed to save file",
 		})
 		return
 	}
