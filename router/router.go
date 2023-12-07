@@ -9,9 +9,8 @@ import (
 	"goserver/libs/conf"
 
 	// v1 "goserver/api/v1"
-	v2 "goserver/api/v2"
+
 	v3 "goserver/api/v3"
-	"goserver/services/third"
 )
 
 var Router *gin.Engine
@@ -51,7 +50,7 @@ func init() {
 	// 	apiv1.POST("/agreement/sign", v1.SignAgreementApi)
 	// }
 
-	apiv2 := Router.Group("/api/v2")
+	// apiv2 := Router.Group("/api/v2")
 	{
 		// user
 		// apiv2.GET("/captcha", v2.GetCaptchaApi)
@@ -120,8 +119,8 @@ func init() {
 		// apiv2.PUT("/pages/publish", v2.UpdatePublishApi)
 		// apiv2.DELETE("/pages/publish", v2.DeletePageApi)
 
-		apiv2.GET("/third", third.GetThirdService)
-		apiv2.GET("/crawl", v2.Crawl)
+		// apiv2.GET("/third", third.GetThirdService)
+		// apiv2.GET("/crawl", v2.Crawl)
 	}
 
 	apiv3 := Router.Group("/api/v3")
